@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "price_id requerido" }, { status: 400 });
     }
 
-    // Verificar que el price_id pertenece a GoFit (previene compra de precios arbitrarios)
+    // Verificar que el price_id pertenece a FitLab (previene compra de precios arbitrarios)
     const allowedIds = getAllowedPriceIds();
     if (allowedIds.size > 0 && !allowedIds.has(parsed.data.price_id)) {
       return NextResponse.json({ error: "Plan no válido" }, { status: 400 });

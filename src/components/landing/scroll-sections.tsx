@@ -278,7 +278,7 @@ function AISection() {
         </p>
         <div className="inline-flex items-center gap-2 rounded-2xl border border-violet-500/20 bg-violet-500/8 px-5 py-3 text-sm text-violet-300">
           <span className="text-lg">✦</span>
-          Tecnología GoFit · Planes inteligentes
+          Tecnología FitLab · Planes inteligentes
         </div>
       </motion.div>
 
@@ -297,7 +297,7 @@ function AISection() {
             </div>
             <div className="flex-1">
               <span className="font-semibold">{a.dia}</span>
-              <span className="ml-2 text-sm text-gray-500">Sugerencia GoFit</span>
+              <span className="ml-2 text-sm text-gray-500">Sugerencia FitLab</span>
             </div>
             <span className={`text-sm font-bold ${a.color}`}>{a.tipo}</span>
           </motion.div>

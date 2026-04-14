@@ -2,10 +2,10 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { HeroWrapper } from "@/components/landing/hero-wrapper";
 import { ScrollSections } from "@/components/landing/scroll-sections";
-import { GoFitLogo } from "@/components/ui/gofit-logo";
+import { FitLabLogo } from "@/components/ui/gofit-logo";
 
 export const metadata: Metadata = {
-  title: "GoFit — Planes de entrenamiento 100% personalizados",
+  title: "FitLab — Planes de entrenamiento 100% personalizados",
   description: "Crea tu plan de entrenamiento personalizado adaptado a tu cuerpo y objetivos. Gratis para empezar.",
 };
 
@@ -31,7 +31,7 @@ export default function HomePage() {
       {/* ── Navbar ─────────────────────────────────────────────────────────── */}
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#020817]/75 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5 lg:px-16">
-          <GoFitLogo height={28} />
+          <FitLabLogo height={28} />
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm font-medium text-gray-400 transition hover:text-white">
               Iniciar sesión
@@ -200,7 +200,7 @@ export default function HomePage() {
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <footer className="border-t border-white/5 px-6 py-8 lg:px-16">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 sm:flex-row sm:justify-between">
-          <GoFitLogo height={24} />
+          <FitLabLogo height={24} />
           <div className="flex gap-6 text-sm text-gray-600">
             {["/legal", "/privacidad", "/cookies", "/precios"].map((href) => (
               <Link key={href} href={href} className="capitalize transition hover:text-gray-400">

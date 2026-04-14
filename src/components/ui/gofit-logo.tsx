@@ -1,18 +1,18 @@
-// Componente de logo GoFit — icono hexágono + rayo + texto, fondo transparente
-interface GoFitLogoProps {
+// Componente de logo FitLab — icono hexágono + rayo + texto, fondo transparente
+interface FitLabLogoProps {
   /** Altura en píxeles (mantiene proporción) */
   height?: number;
   className?: string;
 }
 
-export function GoFitLogo({ height = 32, className }: GoFitLogoProps) {
+export function FitLabLogo({ height = 32, className }: FitLabLogoProps) {
   // viewBox: icono (76×88) + gap + texto "GOFIT" a 80px ≈ ancho total ~290, alto ~88
   return (
     <svg
       viewBox="0 0 290 88"
       height={height}
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="GoFit"
+      aria-label="FitLab"
       className={className}
     >
       <defs>

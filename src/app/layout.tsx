@@ -15,32 +15,32 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "GoFit — Planes de entrenamiento 100% personalizados",
-    template: "%s | GoFit",
+    default: "FitLab — Planes de entrenamiento 100% personalizados",
+    template: "%s | FitLab",
   },
   description:
     "Crea tu plan de entrenamiento y bienestar personalizado, adaptado a tu cuerpo y objetivos. Gratis para empezar, PRO para maximizar resultados.",
   keywords: ["entrenamiento", "fitness", "planes personalizados", "bienestar", "ejercicio", "nutrición"],
-  authors: [{ name: "GoFit" }],
-  creator: "GoFit",
-  metadataBase: new URL("https://gofit.app"),
+  authors: [{ name: "FitLab" }],
+  creator: "FitLab",
+  metadataBase: new URL("https://fitlab.app"),
   icons: {
-    icon: "/gofit-logo.svg",
-    shortcut: "/gofit-logo.svg",
+    icon: "/fitlab-logo.svg",
+    shortcut: "/fitlab-logo.svg",
   },
   openGraph: {
     type: "website",
     locale: "es_ES",
-    url: "https://gofit.app",
-    title: "GoFit — Planes de entrenamiento 100% personalizados",
+    url: "https://fitlab.app",
+    title: "FitLab — Planes de entrenamiento 100% personalizados",
     description:
       "Crea tu plan de entrenamiento y bienestar personalizado, adaptado a tu cuerpo y objetivos.",
-    siteName: "GoFit",
-    images: [{ url: "/gofit-logo.svg", width: 680, height: 330, alt: "GoFit" }],
+    siteName: "FitLab",
+    images: [{ url: "/fitlab-logo.svg", width: 680, height: 330, alt: "FitLab" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "GoFit — Planes de entrenamiento 100% personalizados",
+    title: "FitLab — Planes de entrenamiento 100% personalizados",
     description:
       "Crea tu plan de entrenamiento y bienestar personalizado, adaptado a tu cuerpo y objetivos.",
   },

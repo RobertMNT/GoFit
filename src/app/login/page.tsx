@@ -4,7 +4,7 @@ import { AuthForm } from "@/components/auth/auth-form";
 
 export const metadata: Metadata = {
   title: "Iniciar sesión",
-  description: "Accede a tu cuenta de GoFit",
+  description: "Accede a tu cuenta de FitLab",
 };
 
 export default function LoginPage() {

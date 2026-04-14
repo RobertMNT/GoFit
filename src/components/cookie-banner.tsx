@@ -11,7 +11,7 @@ export function CookieBanner() {
     // Guard necesario: Next.js 15 inyecta un polyfill roto de localStorage en workers de Node.js
     if (typeof window === "undefined") return;
     try {
-      const aceptado = localStorage.getItem("gofit_cookies_accepted");
+      const aceptado = localStorage.getItem("fitlab_cookies_accepted");
       if (!aceptado) setVisible(true);
     } catch {
       setVisible(true);
@@ -20,7 +20,7 @@ export function CookieBanner() {
 
   const aceptar = () => {
     try {
-      localStorage.setItem("gofit_cookies_accepted", "true");
+      localStorage.setItem("fitlab_cookies_accepted", "true");
     } catch {
       // Ignorar si localStorage no está disponible
     }
