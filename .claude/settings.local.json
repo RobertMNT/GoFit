@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --version)",
+      "Bash(npm --version)",
+      "Bash(npm install:*)",
+      "Bash(pnpm create:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm lint:*)",
+      "Bash(claude mcp:*)",
+      "Bash(pnpm build:*)",
+      "Bash(node -e \"const s = require\\(''''./node_modules/stripe''''\\); console.log\\(Object.keys\\(s.LATEST_API_VERSION || {}\\)\\)\")",
+      "Bash(cd:*)",
+      "Bash(npx tsc:*)",
+      "Bash(rm -rf .next)",
+      "Bash(pnpm dev:*)",
+      "Bash(taskkill //F //IM node.exe)"
+    ]
+  }
+}
