@@ -2,5 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install",
-  "regions": ["mad1"]
+  "regions": ["fra1"]
 }
