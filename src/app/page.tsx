@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { HeroWrapper } from "@/components/landing/hero-wrapper";
 import { ScrollSections } from "@/components/landing/scroll-sections";
 import { FitLabLogo } from "@/components/ui/gofit-logo";
+import { NavbarAuth } from "@/components/landing/navbar-auth";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
   title: "FitLab — Planes de entrenamiento 100% personalizados",
@@ -24,7 +26,20 @@ const FEATURES = [
   { icon: "🔒", titulo: "RGPD compliant",          desc: "Tus datos son tuyos. Almacenados en Europa, nunca compartidos." },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let navUser: { name: string | null; email: string | null } | null = null;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user.id)
+      .single();
+    navUser = { name: profile?.full_name ?? null, email: user.email ?? null };
+  }
+
   return (
     <div className="bg-[#020817] text-white">
 
@@ -33,15 +48,7 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5 lg:px-16">
           <FitLabLogo height={28} />
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-gray-400 transition hover:text-white">
-              Iniciar sesión
-            </Link>
-            <Link
-              href="/registro"
-              className="rounded-xl border border-blue-500/40 bg-blue-600/20 px-5 py-2 text-sm font-semibold text-blue-300 backdrop-blur-sm transition hover:bg-blue-600 hover:text-white hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
-            >
-              Empezar gratis
-            </Link>
+            <NavbarAuth user={navUser} />
           </div>
         </div>
       </nav>
