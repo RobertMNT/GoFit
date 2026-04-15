@@ -1,6 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
+import { FitLabLogo } from "@/components/ui/gofit-logo";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -71,122 +72,181 @@ export function AuthForm({ mode }: AuthFormProps) {
 
   const isLogin = mode === "login";
 
+  const benefits = [
+    { icon: "🎯", text: "Plan 100% personalizado a tu cuerpo y objetivo" },
+    { icon: "🥗", text: "Dieta y macros calculados para ti" },
+    { icon: "📈", text: "Progresión automática semana a semana" },
+    { icon: "🔒", text: "Tus datos seguros, almacenados en Europa" },
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">
-        {/* Cabecera */}
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            {isLogin ? "Bienvenido de nuevo" : "Crea tu cuenta"}
-          </h1>
-          <p className="mt-2 text-sm text-gray-500">
-            {isLogin ? "Accede a tu plan de entrenamiento" : "Empieza gratis, sin tarjeta"}
-          </p>
+    <div className="flex min-h-screen">
+      {/* ── Panel izquierdo — branding ─────────────────────────── */}
+      <div className="relative hidden flex-col justify-between bg-[#020817] p-10 lg:flex lg:w-1/2">
+        {/* Glow de fondo */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-blue-600/20 blur-3xl" />
+          <div className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-violet-600/15 blur-3xl" />
         </div>
 
-        {/* Botón Google */}
-        <button
-          onClick={handleGoogleLogin}
-          className="mb-6 flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+        {/* Logo */}
+        <Link href="/" className="relative z-10 flex items-center gap-2 text-white">
+          <FitLabLogo height={28} />
+        </Link>
+
+        {/* Beneficios */}
+        <div className="relative z-10 space-y-5">
+          <h2 className="text-3xl font-black tracking-tight text-white">
+            Tu cuerpo.<br />
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              Tu plan.
+            </span>
+          </h2>
+          <div className="space-y-3">
+            {benefits.map((b) => (
+              <div key={b.text} className="flex items-center gap-3">
+                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-white/8 text-base">
+                  {b.icon}
+                </span>
+                <span className="text-sm text-gray-300">{b.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Tagline pie */}
+        <p className="relative z-10 text-xs text-gray-600">
+          © {new Date().getFullYear()} FitLab · Todos los derechos reservados
+        </p>
+      </div>
+
+      {/* ── Panel derecho — formulario ─────────────────────────── */}
+      <div className="flex flex-1 flex-col justify-center bg-gray-50 px-6 py-12 sm:px-12">
+        {/* Botón volver (visible solo en móvil / siempre arriba) */}
+        <Link
+          href="/"
+          className="mb-8 flex w-fit items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 lg:absolute lg:left-[52%] lg:top-6"
         >
-          <GoogleIcon />
-          Continuar con Google
-        </button>
+          <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          </svg>
+          Inicio
+        </Link>
 
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
+        <div className="mx-auto w-full max-w-sm">
+          {/* Cabecera */}
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-gray-900">
+              {isLogin ? "Bienvenido de nuevo" : "Crea tu cuenta gratis"}
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+              {isLogin ? "Accede a tu plan personalizado" : "Sin tarjeta. Sin compromiso."}
+            </p>
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-gray-400">o con email</span>
-          </div>
-        </div>
 
-        {/* Formulario email/contraseña */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
+          {/* Botón Google */}
+          <button
+            onClick={handleGoogleLogin}
+            className="mb-5 flex w-full items-center justify-center gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 hover:shadow"
+          >
+            <GoogleIcon />
+            Continuar con Google
+          </button>
+
+          <div className="relative mb-5">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-gray-200" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-gray-50 px-2 text-gray-400">o con email</span>
+            </div>
+          </div>
+
+          {/* Formulario */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div>
+                <label htmlFor="fullName" className="mb-1.5 block text-sm font-medium text-gray-700">
+                  Nombre completo
+                </label>
+                <input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                  className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                  placeholder="Ana García"
+                />
+              </div>
+            )}
+
             <div>
-              <label htmlFor="fullName" className="mb-1 block text-sm font-medium text-gray-700">
-                Nombre completo
+              <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-gray-700">
+                Email
               </label>
               <input
-                id="fullName"
-                type="text"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-                placeholder="Ana García"
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="ana@ejemplo.com"
               />
             </div>
-          )}
 
-          <div>
-            <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              placeholder="ana@ejemplo.com"
-            />
-          </div>
+            <div>
+              <label htmlFor="password" className="mb-1.5 block text-sm font-medium text-gray-700">
+                Contraseña
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={8}
+                className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 shadow-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                placeholder="Mínimo 8 caracteres"
+              />
+            </div>
 
-          <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-              Contraseña
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              minLength={8}
-              className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-              placeholder="Mínimo 8 caracteres"
-            />
-          </div>
+            {error && (
+              <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700">{error}</div>
+            )}
+            {message && (
+              <div className="rounded-xl bg-green-50 p-3 text-sm text-green-700">{message}</div>
+            )}
 
-          {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>
-          )}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50"
+            >
+              {loading ? "Cargando..." : isLogin ? "Iniciar sesión" : "Crear cuenta gratis"}
+            </button>
+          </form>
 
-          {message && (
-            <div className="rounded-lg bg-green-50 p-3 text-sm text-green-700">{message}</div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-lg bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
-          >
-            {loading ? "Cargando..." : isLogin ? "Iniciar sesión" : "Crear cuenta gratis"}
-          </button>
-        </form>
-
-        {/* Enlace alternativo */}
-        <p className="mt-6 text-center text-sm text-gray-500">
-          {isLogin ? (
-            <>
-              ¿No tienes cuenta?{" "}
-              <Link href="/registro" className="font-medium text-blue-600 hover:underline">
-                Regístrate gratis
-              </Link>
-            </>
-          ) : (
-            <>
-              ¿Ya tienes cuenta?{" "}
-              <Link href="/login" className="font-medium text-blue-600 hover:underline">
-                Inicia sesión
-              </Link>
-            </>
-          )}
-        </p>
+          {/* Enlace alternativo */}
+          <p className="mt-6 text-center text-sm text-gray-500">
+            {isLogin ? (
+              <>
+                ¿No tienes cuenta?{" "}
+                <Link href="/registro" className="font-semibold text-blue-600 hover:underline">
+                  Regístrate gratis
+                </Link>
+              </>
+            ) : (
+              <>
+                ¿Ya tienes cuenta?{" "}
+                <Link href="/login" className="font-semibold text-blue-600 hover:underline">
+                  Inicia sesión
+                </Link>
+              </>
+            )}
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -15,7 +15,11 @@
       "Bash(npx tsc:*)",
       "Bash(rm -rf .next)",
       "Bash(pnpm dev:*)",
-      "Bash(taskkill //F //IM node.exe)"
+      "Bash(taskkill //F //IM node.exe)",
+      "Bash(cmd /c \"vercel --version\")",
+      "Bash(cmd /c \"pnpm add -g vercel\")",
+      "Bash(cmd:*)",
+      "Bash(curl:*)"
     ]
   }
 }

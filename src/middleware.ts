@@ -1,8 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
+import { isAdmin } from "@/lib/admin";
 import { NextResponse, type NextRequest } from "next/server";
 
 // Rutas que requieren autenticación
-const PROTECTED_ROUTES = ["/dashboard", "/plan", "/perfil", "/onboarding"];
+const PROTECTED_ROUTES = ["/dashboard", "/plan", "/perfil", "/onboarding", "/admin"];
 
 // Rutas que requieren plan PRO
 const PRO_ROUTES = ["/dashboard/historial"];
@@ -49,6 +50,13 @@ export async function middleware(request: NextRequest) {
     const redirectUrl = new URL("/login", request.url);
     redirectUrl.searchParams.set("next", pathname);
     return NextResponse.redirect(redirectUrl);
+  }
+
+  // Proteger rutas de admin — solo emails en ADMIN_EMAILS
+  if (pathname.startsWith("/admin")) {
+    if (!user || !isAdmin(user.email)) {
+      return NextResponse.redirect(new URL("/dashboard", request.url));
+    }
   }
 
   // Verificar acceso PRO en el servidor (nunca en cliente)
