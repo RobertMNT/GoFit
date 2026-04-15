@@ -41,19 +41,37 @@ export async function POST(request: Request) {
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         if (session.mode !== "subscription") break;
+
+        // Obtener el user_id desde el metadata de la sesión
+        const userId = session.metadata?.supabase_user_id;
+        if (!userId) {
+          console.error("[stripe-webhook] checkout.session.completed sin supabase_user_id en metadata");
+          break;
+        }
+
+        const { error } = await supabase
+          .from("profiles")
+          .update({ role: "pro" })
+          .eq("id", userId);
+
+        if (error) {
+          console.error("[stripe-webhook] error actualizando rol a pro:", error);
+        } else {
+          console.log("[stripe-webhook] usuario", userId, "actualizado a PRO");
+        }
         break;
       }
 
       case "customer.subscription.created":
       case "customer.subscription.updated": {
         const subscription = event.data.object as Stripe.Subscription;
-        await activarSuscripcion(supabase, subscription);
+        await actualizarRolPorSuscripcion(supabase, subscription);
         break;
       }
 
       case "customer.subscription.deleted": {
         const subscription = event.data.object as Stripe.Subscription;
-        await cancelarSuscripcion(supabase, subscription);
+        await actualizarRolPorSuscripcion(supabase, subscription);
         break;
       }
     }
@@ -65,29 +83,28 @@ export async function POST(request: Request) {
   return NextResponse.json({ received: true });
 }
 
-// Activa el rol PRO en profiles cuando la suscripción está activa
-async function activarSuscripcion(
+// Sincroniza el rol según el estado real de la suscripción en Stripe
+async function actualizarRolPorSuscripcion(
   supabase: Awaited<ReturnType<typeof createClient>>,
   subscription: Stripe.Subscription,
 ) {
   const userId = subscription.metadata?.supabase_user_id;
-  if (!userId) return;
+  if (!userId) {
+    console.error("[stripe-webhook] suscripción sin supabase_user_id en metadata:", subscription.id);
+    return;
+  }
 
   const esActiva = subscription.status === "active" || subscription.status === "trialing";
+  const nuevoRol = esActiva ? "pro" : "free";
 
-  await supabase
+  const { error } = await supabase
     .from("profiles")
-    .update({ role: esActiva ? "pro" : "free" })
+    .update({ role: nuevoRol })
     .eq("id", userId);
-}
 
-// Revoca el acceso PRO al cancelarse la suscripción
-async function cancelarSuscripcion(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  subscription: Stripe.Subscription,
-) {
-  const userId = subscription.metadata?.supabase_user_id;
-  if (!userId) return;
-
-  await supabase.from("profiles").update({ role: "free" }).eq("id", userId);
+  if (error) {
+    console.error("[stripe-webhook] error actualizando rol:", error);
+  } else {
+    console.log("[stripe-webhook] usuario", userId, "→", nuevoRol, "(sub status:", subscription.status, ")");
+  }
 }
