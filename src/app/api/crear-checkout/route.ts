@@ -80,9 +80,6 @@ export async function POST(request: Request) {
       subscription_data: {
         metadata: { supabase_user_id: user.id },
       },
-      // Configuración para mercado europeo
-      tax_id_collection: { enabled: true },
-      automatic_tax: { enabled: true },
     });
 
     return NextResponse.json({ url: session.url }, { status: 200 });

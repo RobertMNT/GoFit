@@ -103,19 +103,28 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Respuesta IA vacía" }, { status: 500 });
     }
 
-    // Limpiar posibles backticks de markdown que la IA pudiera añadir
-    const cleanedJson = textContent.text.replace(/```json\n?|\n?```/g, "").trim();
+    // Extraer el JSON — buscar el primer { y el último } para ignorar texto extra
+    const raw = textContent.text;
+    const start = raw.indexOf("{");
+    const end = raw.lastIndexOf("}");
+    if (start === -1 || end === -1 || end <= start) {
+      console.error("[generar-plan] sin JSON en respuesta:", raw.slice(0, 200));
+      return NextResponse.json({ error: "Respuesta IA sin JSON" }, { status: 500 });
+    }
+    const cleanedJson = raw.slice(start, end + 1);
 
     let planData: unknown;
     try {
       planData = JSON.parse(cleanedJson);
-    } catch {
+    } catch (parseErr) {
+      console.error("[generar-plan] JSON inválido:", parseErr, cleanedJson.slice(0, 300));
       return NextResponse.json({ error: "JSON inválido en respuesta IA" }, { status: 500 });
     }
 
     // Validar la estructura del plan con Zod
     const planResult = fitnessPlanResponseSchema.safeParse(planData);
     if (!planResult.success) {
+      console.error("[generar-plan] validación Zod fallida:", JSON.stringify(planResult.error.issues.slice(0, 5)));
       return NextResponse.json({ error: "Estructura del plan inválida" }, { status: 500 });
     }
 

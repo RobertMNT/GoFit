@@ -46,7 +46,7 @@ Tu tarea es crear un plan completo de entrenamiento + dieta personalizado en for
 - Nivel: ${NIVELES[answers.nivel]}
 - Días disponibles por semana: ${answers.dias_por_semana}
 - Duración por sesión: ${answers.duracion_sesion} minutos
-- Lugar de entrenamiento: ${answers.lugar_entreno}
+- Lugar de entrenamiento: ${Array.isArray(answers.lugar_entreno) ? answers.lugar_entreno.join(", ") : answers.lugar_entreno}
 - Equipamiento disponible: ${equipamientoLista}
 - Sexo: ${answers.sexo}
 - Edad: ${answers.edad} años

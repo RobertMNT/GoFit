@@ -152,18 +152,26 @@ function StepLugar({ data, onChange }: Omit<QuestionnaireStepProps, "step">) {
     { value: "exterior", label: "Exterior", emoji: "🌳" },
   ] as const;
 
+  const toggle = (value: "casa" | "gimnasio" | "exterior") => {
+    const actual = data.lugar_entreno as string[];
+    const nuevo = actual.includes(value)
+      ? actual.filter((v) => v !== value)
+      : [...actual, value];
+    if (nuevo.length > 0) onChange({ lugar_entreno: nuevo as ("casa" | "gimnasio" | "exterior")[] });
+  };
+
   return (
     <div>
       <h2 className="mb-2 text-xl font-semibold text-gray-900">¿Dónde vas a entrenar?</h2>
-      <p className="mb-6 text-sm text-gray-500">Esto define qué ejercicios y equipamiento usaremos</p>
+      <p className="mb-6 text-sm text-gray-500">Puedes seleccionar varios lugares</p>
       <div className="grid grid-cols-3 gap-3">
         {opciones.map((op) => (
           <OptionCard
             key={op.value}
             emoji={op.emoji}
             label={op.label}
-            selected={data.lugar_entreno === op.value}
-            onClick={() => onChange({ lugar_entreno: op.value })}
+            selected={(data.lugar_entreno as string[]).includes(op.value)}
+            onClick={() => toggle(op.value)}
           />
         ))}
       </div>

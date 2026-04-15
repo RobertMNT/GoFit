@@ -50,14 +50,22 @@ export default async function DashboardPage() {
               {esPro ? "Plan PRO activo" : "Plan Free"}
             </p>
           </div>
-          {!esPro && (
+          <div className="flex items-center gap-3">
             <Link
-              href="/precios"
-              className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+              href="/"
+              className="rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50"
             >
-              Actualizar a PRO
+              ← Inicio
             </Link>
-          )}
+            {!esPro && (
+              <Link
+                href="/precios"
+                className="rounded-xl bg-blue-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-blue-700"
+              >
+                Actualizar a PRO
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* CTA nuevo plan */}
