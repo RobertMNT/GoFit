@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Respuestas del cuestionario inválidas" }, { status: 422 });
   }
 
-  const prompt = buildPlanPrompt(answersResult.data);
+  const prompt = buildPlanPrompt(answersResult.data, profile?.role === "pro");
 
   // SSE streaming — el cliente ve el progreso en tiempo real
   const enc = new TextEncoder();

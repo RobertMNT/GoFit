@@ -31,7 +31,7 @@ const DIETA: Record<string, string> = {
 };
 
 // Construye el prompt del sistema para la generación de planes
-export function buildPlanPrompt(answers: QuestionnaireData): string {
+export function buildPlanPrompt(answers: QuestionnaireData, esPro = false): string {
   const equipamientoLista = answers.equipamiento.join(", ");
   const restriccionesTexto =
     answers.restricciones.trim() || "ninguna lesión o restricción indicada";
@@ -70,11 +70,13 @@ Tu tarea es crear un plan completo de entrenamiento + dieta personalizado en for
 1. Calcula las calorías diarias usando la fórmula de Mifflin-St Jeor ajustada al objetivo
 2. Distribuye macronutrientes según el objetivo (más proteína para ganar músculo, déficit moderado para perder peso, etc.)
 3. Una sola nota de nutrición breve (máx 2 frases) a nivel semana
-4. Para CADA día de la semana (incluyendo días de descanso), incluye exactamente 4 comidas diferentes: Desayuno, Almuerzo, Merienda y Cena
+${esPro ? `4. Para CADA día de la semana (incluyendo días de descanso), incluye exactamente 4 comidas diferentes: Desayuno, Almuerzo, Merienda y Cena
 5. Las comidas deben variar de un día a otro — no repitas el mismo plato en la misma semana
 6. Las comidas de días de entrenamiento deben tener más carbohidratos pre-entreno; las de descanso más proteína y menos carbos
 7. Respeta la preferencia de dieta y evita los alimentos indicados
-8. Las calorías de las 4 comidas deben sumar aproximadamente el total diario
+8. Las calorías de las 4 comidas deben sumar aproximadamente el total diario` : `4. NO incluyas comidas en los días ("comidas" debe ser un array vacío [] en cada día)
+5. La nutrición solo se representa con macros semanales (calorias_diarias, proteinas_g, carbohidratos_g, grasas_g, notas)
+6. Respeta la preferencia de dieta en las notas nutricionales`}
 
 ## Formato de respuesta — SOLO JSON, sin texto adicional
 

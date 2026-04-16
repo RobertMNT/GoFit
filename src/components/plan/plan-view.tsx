@@ -102,16 +102,37 @@ export function PlanView({ plan, esPro, weeklyLogs }: PlanViewProps) {
 
           {/* Banner upgrade para usuarios FREE */}
           {!esPro && (
-            <div className="mt-6 rounded-2xl border border-blue-200 bg-blue-50 p-5 text-center">
-              <p className="font-semibold text-gray-800">
-                ⭐ Plan PRO — desbloquea las comidas diarias personalizadas, seguimiento semanal y ajuste automático
-              </p>
-              <a
-                href="/precios"
-                className="mt-3 inline-block rounded-xl bg-blue-600 px-6 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
-              >
-                Ver planes PRO
-              </a>
+            <div className="mt-6 rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-5">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl">⭐</span>
+                <div className="flex-1">
+                  <p className="font-semibold text-gray-900">Desbloquea el plan PRO</p>
+                  <ul className="mt-2 space-y-1.5 text-sm text-gray-600">
+                    <li className="flex items-center gap-2">
+                      <span className="text-emerald-500">✓</span>
+                      <span><strong>Rutina nutricional diaria</strong> — menú completo para cada día (desayuno, almuerzo, merienda y cena)</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-emerald-500">✓</span>
+                      <span>Seguimiento semanal de ejercicios</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-emerald-500">✓</span>
+                      <span>Ajuste automático del plan con IA</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <span className="text-emerald-500">✓</span>
+                      <span>Planes ilimitados</span>
+                    </li>
+                  </ul>
+                  <a
+                    href="/precios"
+                    className="mt-4 inline-block rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+                  >
+                    Ver planes PRO →
+                  </a>
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -248,7 +269,7 @@ function DiaCard({ dia, esPro }: { dia: DayPlan; esPro: boolean }) {
       {!esPro && !esDescanso && (
         <div className="border-t border-dashed border-blue-100 bg-blue-50/40 px-4 py-3">
           <p className="text-xs text-blue-600">
-            ⭐ <a href="/precios" className="font-medium underline-offset-2 hover:underline">Actualiza a PRO</a> para ver las comidas personalizadas de cada día
+            🍽️ <a href="/precios" className="font-medium underline-offset-2 hover:underline">Actualiza a PRO</a> para desbloquear la rutina nutricional diaria — desayuno, almuerzo, merienda y cena personalizados para este día
           </p>
         </div>
       )}

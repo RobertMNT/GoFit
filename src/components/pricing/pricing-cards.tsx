@@ -12,10 +12,10 @@ const FEATURES_FREE = [
 
 const FEATURES_PRO = [
   "Planes ilimitados",
+  "Rutina nutricional diaria personalizada",
   "Seguimiento semanal de progreso",
-  "Ajuste automático del plan",
+  "Ajuste automático del plan con IA",
   "Historial completo de planes",
-  "Soporte prioritario",
 ];
 
 // Componente de tarjetas de precios con lógica de checkout Stripe

@@ -7,12 +7,15 @@ const requestSchema = z.object({
   price_id: z.string().min(1),
 });
 
-// Lista blanca de price_ids permitidos (cargada desde env para evitar hardcoding)
+// Lista blanca de price_ids permitidos — soporta ambas convenciones de nombre de env var
 function getAllowedPriceIds(): Set<string> {
   return new Set(
-    [process.env.STRIPE_PRICE_ID_MONTHLY, process.env.STRIPE_PRICE_ID_YEARLY].filter(
-      (id): id is string => typeof id === "string" && id.length > 0,
-    ),
+    [
+      process.env.STRIPE_PRICE_ID_MONTHLY,
+      process.env.STRIPE_PRICE_ID_YEARLY,
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_MONTHLY,
+      process.env.NEXT_PUBLIC_STRIPE_PRICE_ID_PRO_YEARLY,
+    ].filter((id): id is string => typeof id === "string" && id.length > 0),
   );
 }
 

@@ -16,6 +16,7 @@ interface UsuarioAdmin {
 export default function AdminUsuariosPage() {
   const [usuarios, setUsuarios] = useState<UsuarioAdmin[]>([]);
   const [filtro, setFiltro] = useState("");
+  const [tabRol, setTabRol] = useState<"todos" | "pro" | "free">("todos");
   const [cargando, setCargando] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [mensaje, setMensaje] = useState<{ tipo: "ok" | "err"; texto: string } | null>(null);
@@ -50,11 +51,13 @@ export default function AdminUsuariosPage() {
     });
   };
 
-  const filtrados = usuarios.filter(
-    (u) =>
+  const filtrados = usuarios.filter((u) => {
+    const coincideTexto =
       u.email.toLowerCase().includes(filtro.toLowerCase()) ||
-      (u.full_name ?? "").toLowerCase().includes(filtro.toLowerCase()),
-  );
+      (u.full_name ?? "").toLowerCase().includes(filtro.toLowerCase());
+    const coincideRol = tabRol === "todos" || u.role === tabRol;
+    return coincideTexto && coincideRol;
+  });
 
   return (
     <div>
@@ -71,6 +74,30 @@ export default function AdminUsuariosPage() {
           {mensaje.texto}
         </div>
       )}
+
+      {/* Tabs de rol */}
+      <div className="mb-4 flex gap-2">
+        {(["todos", "pro", "free"] as const).map((tab) => {
+          const count =
+            tab === "todos" ? usuarios.length : usuarios.filter((u) => u.role === tab).length;
+          return (
+            <button
+              key={tab}
+              onClick={() => setTabRol(tab)}
+              className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+                tabRol === tab
+                  ? "bg-blue-600 text-white"
+                  : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}{" "}
+              <span className={`ml-1 text-xs ${tabRol === tab ? "opacity-75" : "text-gray-400"}`}>
+                ({count})
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
       {/* Buscador */}
       <input

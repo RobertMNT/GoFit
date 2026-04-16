@@ -22,6 +22,9 @@ export function AuthForm({ mode }: AuthFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [confirmacionEnviada, setConfirmacionEnviada] = useState(false);
+  const [reenvioLoading, setReenvioLoading] = useState(false);
+  const [reenvioOk, setReenvioOk] = useState(false);
 
   const supabase = createClient();
 
@@ -41,7 +44,7 @@ export function AuthForm({ mode }: AuthFormProps) {
           },
         });
         if (signUpError) throw signUpError;
-        setMessage("Revisa tu email para confirmar la cuenta.");
+        setConfirmacionEnviada(true);
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({
           email,
@@ -70,7 +73,62 @@ export function AuthForm({ mode }: AuthFormProps) {
     if (oauthError) setError(oauthError.message);
   };
 
+  const reenviarConfirmacion = async () => {
+    setReenvioLoading(true);
+    setReenvioOk(false);
+    try {
+      await supabase.auth.resend({ type: "signup", email });
+      setReenvioOk(true);
+    } finally {
+      setReenvioLoading(false);
+    }
+  };
+
   const isLogin = mode === "login";
+
+  // Pantalla de confirmación de email tras el registro
+  if (confirmacionEnviada) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-6 py-12 text-center">
+        <div className="mx-auto w-full max-w-sm">
+          <div className="mb-6 flex justify-center">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-3xl">
+              📧
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900">Revisa tu email</h1>
+          <p className="mt-3 text-sm text-gray-500">
+            Hemos enviado un enlace de confirmación a{" "}
+            <span className="font-medium text-gray-900">{email}</span>.
+            <br />Pulsa el enlace para activar tu cuenta.
+          </p>
+
+          <div className="mt-6 rounded-xl border border-gray-200 bg-white p-4 text-left text-sm text-gray-600">
+            <p className="font-medium text-gray-800 mb-1">¿No te ha llegado?</p>
+            <ul className="space-y-1 text-xs text-gray-500 list-disc list-inside">
+              <li>Revisa la carpeta de spam o correo no deseado</li>
+              <li>Puede tardar unos minutos en llegar</li>
+            </ul>
+          </div>
+
+          <button
+            onClick={reenviarConfirmacion}
+            disabled={reenvioLoading || reenvioOk}
+            className="mt-5 w-full rounded-xl border border-gray-200 bg-white py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+          >
+            {reenvioLoading ? "Enviando..." : reenvioOk ? "Email reenviado ✓" : "Reenviar email de confirmación"}
+          </button>
+
+          <Link
+            href="/login"
+            className="mt-4 block text-sm text-blue-600 hover:underline"
+          >
+            Ya tengo cuenta activa — iniciar sesión
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const benefits = [
     { icon: "🎯", text: "Plan 100% personalizado a tu cuerpo y objetivo" },

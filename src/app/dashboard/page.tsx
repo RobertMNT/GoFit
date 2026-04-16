@@ -1,4 +1,5 @@
 import { PlanCard } from "@/components/dashboard/plan-card";
+import { UpgradeBanner } from "@/components/dashboard/upgrade-banner";
 import { createClient } from "@/lib/supabase/server";
 import type { FitnessPlan, UserProfile } from "@/types/database";
 import type { Metadata } from "next";
@@ -9,7 +10,12 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export default async function DashboardPage() {
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ upgrade?: string }>;
+}) {
+  const { upgrade } = await searchParams;
   const supabase = await createClient();
 
   const {
@@ -40,6 +46,9 @@ export default async function DashboardPage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="mx-auto max-w-5xl px-4 py-10">
+        {/* Banner de upgrade exitoso */}
+        {upgrade === "success" && <UpgradeBanner />}
+
         {/* Saludo */}
         <div className="mb-8 flex items-center justify-between">
           <div>
