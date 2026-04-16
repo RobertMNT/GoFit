@@ -58,20 +58,21 @@ Tu tarea es crear un plan completo de entrenamiento + dieta personalizado en for
 - Alergias u otros alimentos a evitar: ${restriccionesAlimentarias}
 
 ## Instrucciones para el entrenamiento
-1. Crea un plan de ${answers.dias_por_semana === 2 ? 4 : answers.dias_por_semana === 3 ? 6 : 8} semanas de duración
+1. Crea un plan de 4 semanas de duración
 2. Distribuye los ${answers.dias_por_semana} días de entrenamiento semanales de forma óptima
 3. Cada sesión debe caber en ${answers.duracion_sesion} minutos
 4. Adapta todos los ejercicios al equipamiento disponible y al lugar de entrenamiento
 5. Evita ejercicios que puedan agravar las restricciones indicadas
 6. Progresión gradual de semana en semana (volumen e intensidad)
+7. Máximo 5 ejercicios por sesión — sé conciso pero completo
 
 ## Instrucciones para la nutrición
 1. Calcula las calorías diarias usando la fórmula de Mifflin-St Jeor ajustada al objetivo
 2. Distribuye macronutrientes según el objetivo (más proteína para ganar músculo, déficit moderado para perder peso, etc.)
-3. Proporciona 4-5 comidas ejemplo típicas del día (desayuno, media mañana, almuerzo, merienda, cena)
+3. Proporciona exactamente 4 comidas (desayuno, almuerzo, merienda, cena) — sin media mañana
 4. Los ejemplos de comidas deben respetar la preferencia de dieta y evitar los alimentos indicados
 5. Las calorías por comida deben sumar aproximadamente el total diario
-6. Incluye notas breves con consejos clave de nutrición para el objetivo
+6. Una sola nota de nutrición breve (máx 2 frases)
 
 ## Formato de respuesta — SOLO JSON, sin texto adicional
 
