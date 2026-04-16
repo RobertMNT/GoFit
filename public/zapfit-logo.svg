@@ -1,0 +1,51 @@
+<svg width="100%" viewBox="0 0 680 310" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0f1e"/>
+      <stop offset="100%" stop-color="#060c18"/>
+    </linearGradient>
+    <linearGradient id="zap" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="fit" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#cbd5e1"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="680" height="300" fill="url(#bg)" rx="20" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Icono: rayo limpio -->
+  <g transform="translate(148, 68)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+    <polygon points="44,0 20,52 38,52 26,104 68,44 48,44 64,0" fill="url(#zap)" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  </g>
+
+  <!-- ZAPFIT -->
+  <text x="232" y="152" font-family="'Arial Black', Impact, sans-serif" font-size="86" font-weight="900" letter-spacing="-4" fill="url(#zap)" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Arial Black&quot;, Impact, sans-serif;font-size:86px;font-weight:900;text-anchor:start;dominant-baseline:auto">ZAP</text>
+  <text x="464" y="152" font-family="'Arial Black', Impact, sans-serif" font-size="86" font-weight="900" letter-spacing="-4" fill="url(#fit)" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Arial Black&quot;, Impact, sans-serif;font-size:86px;font-weight:900;text-anchor:start;dominant-baseline:auto">FIT</text>
+
+  <!-- Línea separadora fina entre ZAP y FIT -->
+  <rect x="456" y="80" width="2" height="80" rx="1" fill="#3b82f6" opacity="0.4" style="fill:rgb(59, 130, 246);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Tagline -->
+  <text x="340" y="185" font-family="Arial, sans-serif" font-size="11" font-weight="400" letter-spacing="5" fill="#334155" text-anchor="middle" style="fill:rgb(51, 65, 85);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Arial, sans-serif;font-size:11px;font-weight:400;text-anchor:middle;dominant-baseline:auto">PLANES DE DIETA Y ENTRENAMIENTO</text>
+
+  <!-- Versión pequeña / icono solo -->
+  <rect x="40" y="220" width="120" height="60" rx="12" fill="#0f172a" stroke="#1e3a5f" stroke-width="1" style="fill:rgb(15, 23, 42);stroke:rgb(30, 58, 95);color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <g transform="translate(68, 228)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+    <polygon points="22,0 10,26 19,26 13,52 34,22 24,22 32,0" fill="url(#zap)" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  </g>
+  <text x="100" y="258" font-family="'Arial Black', sans-serif" font-size="18" font-weight="900" fill="url(#zap)" letter-spacing="-1" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Arial Black&quot;, sans-serif;font-size:18px;font-weight:900;text-anchor:start;dominant-baseline:auto">ZAP</text>
+  <text x="100" y="274" font-family="'Arial Black', sans-serif" font-size="18" font-weight="900" fill="url(#fit)" letter-spacing="-1" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Arial Black&quot;, sans-serif;font-size:18px;font-weight:900;text-anchor:start;dominant-baseline:auto">FIT</text>
+
+  <!-- Versión horizontal pequeña -->
+  <rect x="180" y="228" width="460" height="44" rx="10" fill="#0f172a" stroke="#1e3a5f" stroke-width="1" style="fill:rgb(15, 23, 42);stroke:rgb(30, 58, 95);color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <g transform="translate(198, 233)" style="fill:rgb(0, 0, 0);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto">
+    <polygon points="14,0 6,16 12,16 8,32 21,14 15,14 20,0" fill="url(#zap)" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  </g>
+  <text x="224" y="257" font-family="'Arial Black', sans-serif" font-size="22" font-weight="900" letter-spacing="-1" fill="url(#zap)" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Arial Black&quot;, sans-serif;font-size:22px;font-weight:900;text-anchor:start;dominant-baseline:auto">ZAP</text>
+  <text x="280" y="257" font-family="'Arial Black', sans-serif" font-size="22" font-weight="900" letter-spacing="-1" fill="url(#fit)" style="stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Arial Black&quot;, sans-serif;font-size:22px;font-weight:900;text-anchor:start;dominant-baseline:auto">FIT</text>
+  <text x="330" y="257" font-family="Arial, sans-serif" font-size="10" letter-spacing="3" fill="#334155" dy="-2" style="fill:rgb(51, 65, 85);stroke:none;color:rgb(251, 251, 254);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Arial, sans-serif;font-size:10px;font-weight:400;text-anchor:start;dominant-baseline:auto"> · DIETA · ENTRENAMIENTO · IA</text>
+</svg>

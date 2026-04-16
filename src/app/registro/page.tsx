@@ -4,7 +4,7 @@ import { AuthForm } from "@/components/auth/auth-form";
 
 export const metadata: Metadata = {
   title: "Crear cuenta",
-  description: "Crea tu cuenta gratuita en FitLab y empieza tu plan de entrenamiento personalizado",
+  description: "Crea tu cuenta gratuita en ZapFit y empieza tu plan de entrenamiento personalizado",
 };
 
 export default function RegistroPage() {

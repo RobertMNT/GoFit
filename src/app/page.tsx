@@ -2,12 +2,12 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { HeroWrapper } from "@/components/landing/hero-wrapper";
 import { ScrollSections } from "@/components/landing/scroll-sections";
-import { FitLabLogo } from "@/components/ui/gofit-logo";
+import { ZapFitLogo } from "@/components/ui/gofit-logo";
 import { NavbarAuth } from "@/components/landing/navbar-auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = {
-  title: "FitLab — Planes de entrenamiento 100% personalizados",
+  title: "ZapFit — Planes de entrenamiento 100% personalizados",
   description: "Crea tu plan de entrenamiento personalizado adaptado a tu cuerpo y objetivos. Gratis para empezar.",
 };
 
@@ -46,7 +46,7 @@ export default async function HomePage() {
       {/* ── Navbar ─────────────────────────────────────────────────────────── */}
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#020817]/75 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-3.5 lg:px-16">
-          <FitLabLogo height={28} />
+          <ZapFitLogo height={28} />
           <div className="flex items-center gap-3">
             <NavbarAuth user={navUser} />
           </div>
@@ -207,7 +207,7 @@ export default async function HomePage() {
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <footer className="border-t border-white/5 px-6 py-8 lg:px-16">
         <div className="mx-auto flex max-w-6xl flex-col items-center gap-4 sm:flex-row sm:justify-between">
-          <FitLabLogo height={24} />
+          <ZapFitLogo height={24} />
           <div className="flex gap-6 text-sm text-gray-600">
             {["/legal", "/privacidad", "/cookies", "/precios"].map((href) => (
               <Link key={href} href={href} className="capitalize transition hover:text-gray-400">

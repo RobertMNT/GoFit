@@ -72,7 +72,7 @@ export default async function AdminPage() {
   return (
     <div>
       <h1 className="mb-1 text-2xl font-bold text-gray-900">Dashboard</h1>
-      <p className="mb-8 text-sm text-gray-500">Resumen general de FitLab</p>
+      <p className="mb-8 text-sm text-gray-500">Resumen general de ZapFit</p>
 
       {/* Stats grid */}
       <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-3">

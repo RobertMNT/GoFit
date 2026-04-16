@@ -15,32 +15,32 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "FitLab — Planes de entrenamiento 100% personalizados",
-    template: "%s | FitLab",
+    default: "ZapFit — Planes de entrenamiento 100% personalizados",
+    template: "%s | ZapFit",
   },
   description:
     "Crea tu plan de entrenamiento y bienestar personalizado, adaptado a tu cuerpo y objetivos. Gratis para empezar, PRO para maximizar resultados.",
   keywords: ["entrenamiento", "fitness", "planes personalizados", "bienestar", "ejercicio", "nutrición"],
-  authors: [{ name: "FitLab" }],
-  creator: "FitLab",
-  metadataBase: new URL("https://fitlab.app"),
+  authors: [{ name: "ZapFit" }],
+  creator: "ZapFit",
+  metadataBase: new URL("https://go-fit-five.vercel.app"),
   icons: {
-    icon: "/fitlab-logo.svg",
-    shortcut: "/fitlab-logo.svg",
+    icon: "/zapfit-logo.svg",
+    shortcut: "/zapfit-logo.svg",
   },
   openGraph: {
     type: "website",
     locale: "es_ES",
-    url: "https://fitlab.app",
-    title: "FitLab — Planes de entrenamiento 100% personalizados",
+    url: "https://go-fit-five.vercel.app",
+    title: "ZapFit — Planes de entrenamiento 100% personalizados",
     description:
       "Crea tu plan de entrenamiento y bienestar personalizado, adaptado a tu cuerpo y objetivos.",
-    siteName: "FitLab",
-    images: [{ url: "/fitlab-logo.svg", width: 680, height: 330, alt: "FitLab" }],
+    siteName: "ZapFit",
+    images: [{ url: "/zapfit-logo.svg", width: 680, height: 330, alt: "ZapFit" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "FitLab — Planes de entrenamiento 100% personalizados",
+    title: "ZapFit — Planes de entrenamiento 100% personalizados",
     description:
       "Crea tu plan de entrenamiento y bienestar personalizado, adaptado a tu cuerpo y objetivos.",
   },

@@ -12,7 +12,7 @@ export default function CookiesPage() {
       <div className="prose prose-gray max-w-none text-sm text-gray-600">
         {/* Integrar widget Iubenda aquí cuando esté configurado */}
         <p>
-          La política de cookies completa está gestionada por Iubenda. FitLab utiliza cookies
+          La política de cookies completa está gestionada por Iubenda. ZapFit utiliza cookies
           estrictamente necesarias para la autenticación de sesión y no utiliza cookies de
           seguimiento o publicidad.
         </p>

@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { Component, type ReactNode } from "react";
-import { FitLabLogo } from "@/components/ui/gofit-logo";
+import { ZapFitLogo } from "@/components/ui/gofit-logo";
 import { Spinner } from "@/components/ui/spinner";
 
 // Fallback visual cuando WebGL no está disponible o falla
@@ -10,7 +10,7 @@ function HeroFallback() {
   return (
     <div className="flex h-full items-center justify-center">
       <div className="opacity-30">
-        <FitLabLogo height={48} />
+        <ZapFitLogo height={48} />
       </div>
     </div>
   );

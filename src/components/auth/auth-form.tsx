@@ -1,7 +1,7 @@
 "use client";
 
 import { createClient } from "@/lib/supabase/client";
-import { FitLabLogo } from "@/components/ui/gofit-logo";
+import { ZapFitLogo } from "@/components/ui/gofit-logo";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
@@ -91,7 +91,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         {/* Logo */}
         <Link href="/" className="relative z-10 flex items-center gap-2 text-white">
-          <FitLabLogo height={28} />
+          <ZapFitLogo height={28} />
         </Link>
 
         {/* Beneficios */}
@@ -116,7 +116,7 @@ export function AuthForm({ mode }: AuthFormProps) {
 
         {/* Tagline pie */}
         <p className="relative z-10 text-xs text-gray-600">
-          © {new Date().getFullYear()} FitLab · Todos los derechos reservados
+          © {new Date().getFullYear()} ZapFit · Todos los derechos reservados
         </p>
       </div>
 
