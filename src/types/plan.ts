@@ -1,6 +1,14 @@
 import { z } from "zod";
 
 // Schema Zod para validar la respuesta JSON de la IA
+
+// Schema de una comida
+export const mealSchema = z.object({
+  nombre: z.string().min(1),          // ej: "Desayuno"
+  calorias: z.number().int().min(0),
+  ejemplo: z.string().min(1),         // descripción del plato ejemplo
+});
+
 export const exerciseSchema = z.object({
   nombre: z.string().min(1),
   series: z.number().int().min(1),
@@ -12,24 +20,18 @@ export const exerciseSchema = z.object({
 export const dayPlanSchema = z.object({
   dia: z.string().min(1),
   tipo: z.enum(["fuerza", "cardio", "flexibilidad", "descanso_activo"]),
+  comidas: z.array(mealSchema).optional(), // comidas del día — solo en planes nuevos
   ejercicios: z.array(exerciseSchema),
 });
 
-// Schema de una comida dentro del plan nutricional
-export const mealSchema = z.object({
-  nombre: z.string().min(1),          // ej: "Desayuno"
-  calorias: z.number().int().min(0),
-  ejemplo: z.string().min(1),         // descripción del plato ejemplo
-});
-
-// Schema del plan nutricional diario
+// Schema del plan nutricional semanal (macros + notas — las comidas van por día)
 export const nutritionPlanSchema = z.object({
   calorias_diarias: z.number().int().min(0),
   proteinas_g: z.number().min(0),
   carbohidratos_g: z.number().min(0),
   grasas_g: z.number().min(0),
   notas: z.string(),
-  comidas: z.array(mealSchema).min(1),
+  comidas: z.array(mealSchema).optional(), // mantenido por compatibilidad con planes anteriores
 });
 
 export const weeklyPlanSchema = z.object({

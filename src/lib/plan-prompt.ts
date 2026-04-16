@@ -69,10 +69,12 @@ Tu tarea es crear un plan completo de entrenamiento + dieta personalizado en for
 ## Instrucciones para la nutrición
 1. Calcula las calorías diarias usando la fórmula de Mifflin-St Jeor ajustada al objetivo
 2. Distribuye macronutrientes según el objetivo (más proteína para ganar músculo, déficit moderado para perder peso, etc.)
-3. Proporciona exactamente 4 comidas (desayuno, almuerzo, merienda, cena) — sin media mañana
-4. Los ejemplos de comidas deben respetar la preferencia de dieta y evitar los alimentos indicados
-5. Las calorías por comida deben sumar aproximadamente el total diario
-6. Una sola nota de nutrición breve (máx 2 frases)
+3. Una sola nota de nutrición breve (máx 2 frases) a nivel semana
+4. Para CADA día de la semana (incluyendo días de descanso), incluye exactamente 4 comidas diferentes: Desayuno, Almuerzo, Merienda y Cena
+5. Las comidas deben variar de un día a otro — no repitas el mismo plato en la misma semana
+6. Las comidas de días de entrenamiento deben tener más carbohidratos pre-entreno; las de descanso más proteína y menos carbos
+7. Respeta la preferencia de dieta y evita los alimentos indicados
+8. Las calorías de las 4 comidas deben sumar aproximadamente el total diario
 
 ## Formato de respuesta — SOLO JSON, sin texto adicional
 
@@ -90,19 +92,19 @@ Responde ÚNICAMENTE con un objeto JSON que siga esta estructura exacta:
         "proteinas_g": number,
         "carbohidratos_g": number,
         "grasas_g": number,
-        "notas": "string — 1-2 consejos clave de nutrición para esta semana",
-        "comidas": [
-          {
-            "nombre": "string — ej: 'Desayuno'",
-            "calorias": number,
-            "ejemplo": "string — descripción concisa del plato, ej: 'Avena con leche, plátano y nueces'"
-          }
-        ]
+        "notas": "string — 1-2 consejos clave de nutrición para esta semana"
       },
       "dias": [
         {
           "dia": "lunes",
           "tipo": "fuerza | cardio | flexibilidad | descanso_activo",
+          "comidas": [
+            {
+              "nombre": "Desayuno | Almuerzo | Merienda | Cena",
+              "calorias": number,
+              "ejemplo": "string — descripción concisa del plato, ej: 'Avena con leche, plátano y nueces'"
+            }
+          ],
           "ejercicios": [
             {
               "nombre": "string",

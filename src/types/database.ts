@@ -56,7 +56,7 @@ export interface NutritionPlan {
   carbohidratos_g: number;
   grasas_g: number;
   notas: string;
-  comidas: Meal[];
+  comidas?: Meal[]; // opcional — planes nuevos tienen comidas por día
 }
 
 export interface WeeklyPlan {
@@ -68,6 +68,7 @@ export interface WeeklyPlan {
 export interface DayPlan {
   dia: string;
   tipo: string;
+  comidas?: Meal[]; // comidas del día — solo en planes generados con formato nuevo
   ejercicios: Exercise[];
 }
 
