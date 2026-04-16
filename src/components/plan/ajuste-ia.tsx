@@ -47,7 +47,7 @@ export function AjusteIA({ planId, semana }: AjusteIAProps) {
       {/* Cabecera */}
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
-          <h3 className="font-semibold text-gray-900">Ajuste automático de plan</h3>
+          <h3 className="font-semibold text-gray-900">Ajuste automático del plan</h3>
           <p className="mt-0.5 text-sm text-gray-500">
             Analiza tu progreso y sugiere cambios para la próxima semana
           </p>

@@ -25,7 +25,7 @@ export function UpgradeBanner() {
           <div>
             <p className="font-bold text-lg">¡Bienvenido a ZapFit PRO!</p>
             <p className="mt-0.5 text-sm text-blue-100">
-              Ya tienes acceso a planes ilimitados, comidas personalizadas cada día, seguimiento semanal y ajuste automático con IA.
+              Ya tienes acceso a planes ilimitados, comidas personalizadas cada día, seguimiento semanal y ajuste automático del plan.
             </p>
             <button
               onClick={() => router.push("/onboarding")}

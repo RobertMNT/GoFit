@@ -14,7 +14,7 @@ const FEATURES_PRO = [
   "Planes ilimitados",
   "Rutina nutricional diaria personalizada",
   "Seguimiento semanal de progreso",
-  "Ajuste automático del plan con IA",
+  "Ajuste automático del plan",
   "Historial completo de planes",
 ];
 

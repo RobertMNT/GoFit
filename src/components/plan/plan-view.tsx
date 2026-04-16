@@ -1,9 +1,10 @@
 "use client";
 
 import { AjusteIA } from "@/components/plan/ajuste-ia";
+import { EjercicioModal } from "@/components/plan/ejercicio-modal";
 import { WeeklyTracker } from "@/components/plan/weekly-tracker";
 import type { FitnessPlan, NutritionPlan, WeeklyLog } from "@/types/database";
-import type { DayPlan, Meal, WeeklyPlan } from "@/types/plan";
+import type { DayPlan, Exercise, Meal, WeeklyPlan } from "@/types/plan";
 import { useState } from "react";
 
 interface PlanViewProps {
@@ -84,7 +85,14 @@ export function PlanView({ plan, esPro, weeklyLogs }: PlanViewProps) {
 
           {/* Días de la semana */}
           {semana.dias.map((dia) => (
-            <DiaCard key={dia.dia} dia={dia} esPro={esPro} />
+            <DiaCard
+              key={dia.dia}
+              dia={dia}
+              esPro={esPro}
+              planId={plan.id}
+              semana={semanaActiva}
+              logsData={(weeklyLogs.find((l) => l.week_number === semanaActiva)?.completed_exercises ?? {}) as Record<string, boolean>}
+            />
           ))}
 
           {/* Seguimiento semanal y ajuste IA — solo PRO */}
@@ -118,7 +126,7 @@ export function PlanView({ plan, esPro, weeklyLogs }: PlanViewProps) {
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-emerald-500">✓</span>
-                      <span>Ajuste automático del plan con IA</span>
+                      <span>Ajuste automático del plan</span>
                     </li>
                     <li className="flex items-center gap-2">
                       <span className="text-emerald-500">✓</span>
@@ -180,9 +188,18 @@ function MacrosCard({ nutricion }: { nutricion: NutritionPlan }) {
   );
 }
 
+interface DiaCardProps {
+  dia: DayPlan;
+  esPro: boolean;
+  planId: string;
+  semana: number;
+  logsData: Record<string, boolean>;
+}
+
 // Tarjeta de un día — muestra ejercicios y (si PRO) las comidas del día
-function DiaCard({ dia, esPro }: { dia: DayPlan; esPro: boolean }) {
+function DiaCard({ dia, esPro, planId, semana, logsData }: DiaCardProps) {
   const [tab, setTab] = useState<"ejercicios" | "comidas">("ejercicios");
+  const [ejercicioSeleccionado, setEjercicioSeleccionado] = useState<Exercise | null>(null);
   const esDescanso = dia.tipo === "descanso_activo";
   const tieneComidas = (dia.comidas?.length ?? 0) > 0;
 
@@ -231,6 +248,14 @@ function DiaCard({ dia, esPro }: { dia: DayPlan; esPro: boolean }) {
         )}
       </div>
 
+      {/* Modal de ejercicio */}
+      {ejercicioSeleccionado && (
+        <EjercicioModal
+          ejercicio={ejercicioSeleccionado}
+          onClose={() => setEjercicioSeleccionado(null)}
+        />
+      )}
+
       {/* Panel de ejercicios */}
       {tab === "ejercicios" && !esDescanso && dia.ejercicios.length > 0 && (
         <div className="border-t border-gray-100">
@@ -245,10 +270,18 @@ function DiaCard({ dia, esPro }: { dia: DayPlan; esPro: boolean }) {
             </thead>
             <tbody className="divide-y divide-gray-50">
               {dia.ejercicios.map((ej, i) => (
-                <tr key={i} className="hover:bg-gray-50">
+                <tr
+                  key={i}
+                  onClick={() => setEjercicioSeleccionado(ej)}
+                  className="cursor-pointer hover:bg-blue-50 transition-colors"
+                >
                   <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">{ej.nombre}</div>
+                    <div className="flex items-center gap-2">
+                      <div className="font-medium text-gray-900">{ej.nombre}</div>
+                      <span className="text-xs text-blue-400 opacity-0 group-hover:opacity-100">ℹ</span>
+                    </div>
                     {ej.notas && <div className="text-xs text-gray-400">{ej.notas}</div>}
+                    <div className="text-xs text-blue-500 mt-0.5">Toca para ver explicación →</div>
                   </td>
                   <td className="px-4 py-3 text-center text-gray-700">{ej.series}</td>
                   <td className="px-4 py-3 text-center text-gray-700">{ej.repeticiones}</td>
@@ -262,7 +295,13 @@ function DiaCard({ dia, esPro }: { dia: DayPlan; esPro: boolean }) {
 
       {/* Panel de comidas del día (solo PRO) */}
       {tab === "comidas" && esPro && tieneComidas && (
-        <ComidasDia comidas={dia.comidas!} />
+        <ComidasDia
+          comidas={dia.comidas!}
+          planId={planId}
+          semana={semana}
+          diaNombre={dia.dia}
+          logsData={logsData}
+        />
       )}
 
       {/* Banner PRO para ver comidas en usuarios FREE */}
@@ -277,26 +316,103 @@ function DiaCard({ dia, esPro }: { dia: DayPlan; esPro: boolean }) {
   );
 }
 
-// Comidas del día
-function ComidasDia({ comidas }: { comidas: Meal[] }) {
+interface ComidasDiaProps {
+  comidas: Meal[];
+  planId: string;
+  semana: number;
+  diaNombre: string;
+  logsData: Record<string, boolean>;
+}
+
+// Comidas del día con check de completado
+function ComidasDia({ comidas, planId, semana, diaNombre, logsData }: ComidasDiaProps) {
+  const [completadas, setCompletadas] = useState<Record<string, boolean>>(() => {
+    const init: Record<string, boolean> = {};
+    comidas.forEach((c) => {
+      const key = `meal_${diaNombre}_${c.nombre}`;
+      init[c.nombre] = logsData[key] ?? false;
+    });
+    return init;
+  });
+  const [guardando, setGuardando] = useState<string | null>(null);
+
+  const toggleComida = async (nombre: string) => {
+    const nuevo = !completadas[nombre];
+    setCompletadas((prev) => ({ ...prev, [nombre]: nuevo }));
+    setGuardando(nombre);
+    try {
+      await fetch("/api/weekly-log", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plan_id: planId,
+          week_number: semana,
+          dia: diaNombre,
+          completado: nuevo,
+          comida: nombre,
+        }),
+      });
+    } finally {
+      setGuardando(null);
+    }
+  };
+
+  const totalHechas = Object.values(completadas).filter(Boolean).length;
+
   return (
     <div className="border-t border-gray-100 divide-y divide-gray-50">
-      {comidas.map((comida, i) => (
-        <div key={i} className="flex items-start gap-3 px-4 py-3 hover:bg-gray-50">
-          <span className="mt-0.5 text-lg">
-            {COMIDA_EMOJI[comida.nombre] ?? "🍴"}
-          </span>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-0.5">
-              {comida.nombre}
-            </div>
-            <div className="text-sm text-gray-800">{comida.ejemplo}</div>
-          </div>
-          <div className="text-xs font-medium text-emerald-600 whitespace-nowrap">
-            {comida.calorias} kcal
-          </div>
+      {/* Progreso rápido */}
+      <div className="flex items-center justify-between px-4 py-2 bg-emerald-50/50">
+        <span className="text-xs text-emerald-700 font-medium">
+          {totalHechas} / {comidas.length} comidas completadas
+        </span>
+        <div className="flex gap-1">
+          {comidas.map((c) => (
+            <div
+              key={c.nombre}
+              className={`h-1.5 w-6 rounded-full transition-all ${completadas[c.nombre] ? "bg-emerald-500" : "bg-gray-200"}`}
+            />
+          ))}
         </div>
-      ))}
+      </div>
+
+      {comidas.map((comida) => {
+        const hecha = completadas[comida.nombre];
+        const cargando = guardando === comida.nombre;
+        return (
+          <button
+            key={comida.nombre}
+            onClick={() => toggleComida(comida.nombre)}
+            disabled={cargando}
+            className={`flex w-full items-start gap-3 px-4 py-3 text-left transition ${hecha ? "bg-emerald-50/60" : "hover:bg-gray-50"}`}
+          >
+            {/* Checkbox */}
+            <div className={`mt-0.5 flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 transition ${
+              hecha ? "border-emerald-500 bg-emerald-500 text-white" : "border-gray-300"
+            }`}>
+              {hecha && (
+                <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              )}
+            </div>
+            <span className="mt-0.5 text-lg">
+              {COMIDA_EMOJI[comida.nombre] ?? "🍴"}
+            </span>
+            <div className="flex-1 min-w-0">
+              <div className={`text-xs font-semibold uppercase tracking-wide mb-0.5 ${hecha ? "text-emerald-600" : "text-gray-500"}`}>
+                {comida.nombre}
+              </div>
+              <div className={`text-sm ${hecha ? "text-gray-500 line-through" : "text-gray-800"}`}>
+                {comida.ejemplo}
+              </div>
+            </div>
+            <div className={`text-xs font-medium whitespace-nowrap ${hecha ? "text-emerald-500" : "text-emerald-600"}`}>
+              {comida.calorias} kcal
+            </div>
+          </button>
+        );
+      })}
     </div>
   );
 }

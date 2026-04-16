@@ -8,6 +8,8 @@ const requestSchema = z.object({
   week_number: z.number().int().min(1),
   dia: z.string().min(1),
   completado: z.boolean(),
+  // Opcional: marcar una comida específica del día
+  comida: z.string().max(50).optional(),
 });
 
 export async function POST(request: Request) {
@@ -44,7 +46,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
     }
 
-    const { plan_id, week_number, dia, completado } = parsed.data;
+    const { plan_id, week_number, dia, completado, comida } = parsed.data;
+    // Si viene "comida", la clave en JSONB es "meal_dia_NombreComida"
+    const clave = comida ? `meal_${dia}_${comida}` : dia;
 
     // Verificar que el plan pertenece al usuario
     const { data: plan } = await supabase
@@ -68,7 +72,7 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     const previo = (existing?.completed_exercises as Record<string, boolean>) ?? {};
-    const actualizado = { ...previo, [dia]: completado };
+    const actualizado = { ...previo, [clave]: completado };
 
     let error;
     if (existing) {

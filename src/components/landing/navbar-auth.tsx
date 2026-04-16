@@ -62,6 +62,13 @@ export function NavbarAuth({ user }: NavbarAuthProps) {
           >
             Mi dashboard
           </Link>
+          <Link
+            href="/perfil"
+            onClick={() => setOpen(false)}
+            className="block px-4 py-3 text-sm text-gray-300 transition hover:bg-white/5 hover:text-white"
+          >
+            Mi perfil
+          </Link>
           <button
             onClick={handleLogout}
             className="w-full px-4 py-3 text-left text-sm text-red-400 transition hover:bg-red-500/10 hover:text-red-300"

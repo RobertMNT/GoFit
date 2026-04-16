@@ -1,5 +1,7 @@
 import { PlanCard } from "@/components/dashboard/plan-card";
+import { StreakWidget } from "@/components/dashboard/streak-widget";
 import { UpgradeBanner } from "@/components/dashboard/upgrade-banner";
+import { WelcomeScreen } from "@/components/dashboard/welcome-screen";
 import { createClient } from "@/lib/supabase/server";
 import type { FitnessPlan, UserProfile } from "@/types/database";
 import type { Metadata } from "next";
@@ -48,6 +50,12 @@ export default async function DashboardPage({
       <div className="mx-auto max-w-5xl px-4 py-10">
         {/* Banner de upgrade exitoso */}
         {upgrade === "success" && <UpgradeBanner />}
+
+        {/* Pantalla de bienvenida — solo para usuarios sin planes */}
+        {userPlans.length === 0 && <WelcomeScreen />}
+
+        {/* Racha de días — visible siempre que haya algún plan */}
+        {userPlans.length > 0 && <StreakWidget />}
 
         {/* Saludo */}
         <div className="mb-8 flex items-center justify-between">
