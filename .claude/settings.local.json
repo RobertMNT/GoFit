@@ -25,7 +25,9 @@
       "Bash(git push:*)",
       "Bash(ls public/)",
       "Bash(ls *.svg *.png *.ico)",
-      "Bash(xargs cat *)"
+      "Bash(xargs cat *)",
+      "Bash(ls C:/Users/USUARIO/Desktop/Proyectos/Proyecto1/*.example)",
+      "Bash(ls C:/Users/USUARIO/Desktop/Proyectos/Proyecto1/.env*)"
     ]
   }
 }

@@ -8,6 +8,8 @@ export interface UserProfile {
   full_name: string | null;
   role: UserRole;
   stripe_customer_id: string | null;
+  blocked: boolean;
+  pro_expires_at: string | null;
   created_at: string;
 }
 

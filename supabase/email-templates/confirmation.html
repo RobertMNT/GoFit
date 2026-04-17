@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirma tu email — ZapFit</title>
+</head>
+<body style="margin:0;padding:0;background:#f5f7fa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f7fa;padding:40px 16px;">
+    <tr>
+      <td align="center">
+        <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;">
+
+          <!-- Logo / cabecera -->
+          <tr>
+            <td align="center" style="padding-bottom:24px;">
+              <table cellpadding="0" cellspacing="0">
+                <tr>
+                  <td style="background:#020817;border-radius:12px;padding:10px 20px;">
+                    <span style="color:#ffffff;font-size:20px;font-weight:800;letter-spacing:-0.5px;">
+                      ⚡ ZapFit
+                    </span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Card principal -->
+          <tr>
+            <td style="background:#ffffff;border-radius:16px;padding:40px 36px;box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+
+              <!-- Icono -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding-bottom:24px;">
+                    <div style="width:56px;height:56px;background:#eff6ff;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:24px;line-height:56px;text-align:center;">
+                      📧
+                    </div>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Título -->
+              <h1 style="margin:0 0 8px;font-size:22px;font-weight:800;color:#0f172a;text-align:center;line-height:1.3;">
+                Confirma tu email
+              </h1>
+              <p style="margin:0 0 28px;font-size:14px;color:#64748b;text-align:center;line-height:1.6;">
+                Solo un paso más para activar tu cuenta en ZapFit y empezar a entrenar con tu plan personalizado.
+              </p>
+
+              <!-- Botón CTA -->
+              <table width="100%" cellpadding="0" cellspacing="0">
+                <tr>
+                  <td align="center" style="padding-bottom:28px;">
+                    <a
+                      href="{{ .ConfirmationURL }}"
+                      style="display:inline-block;background:#2563eb;color:#ffffff;font-size:15px;font-weight:700;text-decoration:none;border-radius:10px;padding:14px 32px;letter-spacing:-0.2px;"
+                    >
+                      Verificar mi cuenta →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Separador -->
+              <hr style="border:none;border-top:1px solid #f1f5f9;margin:0 0 24px;" />
+
+              <!-- Enlace alternativo -->
+              <p style="margin:0 0 6px;font-size:13px;color:#94a3b8;text-align:center;">
+                Si el botón no funciona, copia y pega este enlace en tu navegador:
+              </p>
+              <p style="margin:0;font-size:12px;color:#2563eb;text-align:center;word-break:break-all;">
+                <a href="{{ .ConfirmationURL }}" style="color:#2563eb;text-decoration:none;">
+                  {{ .ConfirmationURL }}
+                </a>
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- Pie -->
+          <tr>
+            <td align="center" style="padding-top:24px;">
+              <p style="margin:0;font-size:12px;color:#94a3b8;">
+                Si no creaste esta cuenta, ignora este email.
+              </p>
+              <p style="margin:6px 0 0;font-size:12px;color:#cbd5e1;">
+                © {{ now | date "2006" }} ZapFit · noreply@zapfit.fit
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

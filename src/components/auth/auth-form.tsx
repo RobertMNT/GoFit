@@ -15,6 +15,7 @@ export function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextUrl = searchParams.get("next") ?? "/dashboard";
+  const errorParam = searchParams.get("error");
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -201,6 +202,14 @@ export function AuthForm({ mode }: AuthFormProps) {
               {isLogin ? "Accede a tu plan personalizado" : "Sin tarjeta. Sin compromiso."}
             </p>
           </div>
+
+          {/* Error de cuenta bloqueada */}
+          {errorParam === "cuenta_bloqueada" && (
+            <div className="mb-5 rounded-xl bg-red-50 border border-red-200 p-4 text-sm text-red-700">
+              <p className="font-semibold">Cuenta bloqueada</p>
+              <p className="mt-0.5 text-xs text-red-600">Tu cuenta ha sido suspendida. Contacta con soporte si crees que es un error.</p>
+            </div>
+          )}
 
           {/* Botón Google */}
           <button

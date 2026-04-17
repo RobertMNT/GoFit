@@ -6,12 +6,11 @@ import { z } from "zod";
 
 const schema = z.object({
   user_id: z.string().uuid(),
-  role: z.enum(["pro", "free"]),
-  // null = indefinido; número = meses a partir de ahora
-  meses: z.number().int().min(1).nullable().optional(),
+  blocked: z.boolean(),
 });
 
-// Asigna o revoca PRO a un usuario con duración opcional (solo admin)
+// Bloquea o desbloquea un usuario (solo admin)
+// Un usuario bloqueado no puede hacer login ni acceder a rutas protegidas
 export async function POST(request: Request) {
   const supabase = await createClient();
   const {
@@ -28,32 +27,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
   }
 
-  const { user_id, role, meses } = parsed.data;
+  const { user_id, blocked } = parsed.data;
 
-  // Calcular fecha de expiración si se indica duración
-  let pro_expires_at: string | null = null;
-  if (role === "pro" && meses != null) {
-    const expiry = new Date();
-    expiry.setMonth(expiry.getMonth() + meses);
-    pro_expires_at = expiry.toISOString();
+  // Impedir que el admin se bloquee a sí mismo
+  if (user_id === user.id) {
+    return NextResponse.json({ error: "No puedes bloquearte a ti mismo" }, { status: 400 });
   }
 
-  // Usar service client para bypassear RLS
   const service = createServiceClient();
-
-  const updatePayload =
-    role === "free"
-      ? { role: "free", pro_expires_at: null }
-      : { role: "pro", pro_expires_at };
 
   const { error } = await service
     .from("profiles")
-    .update(updatePayload)
+    .update({ blocked })
     .eq("id", user_id);
 
   if (error) {
-    return NextResponse.json({ error: "Error al actualizar el rol" }, { status: 500 });
+    return NextResponse.json({ error: "Error al actualizar el estado" }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, role, pro_expires_at });
+  return NextResponse.json({ ok: true, blocked });
 }

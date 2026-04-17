@@ -1,37 +1,52 @@
 import { isAdmin } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/service";
 import { NextResponse } from "next/server";
 
-// Devuelve la lista completa de usuarios con su nº de planes (solo admin)
+// Devuelve todos los usuarios con stats (solo admin)
+// Usa service client para bypassear RLS — sin esto solo devuelve el propio perfil
 export async function GET() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user || !isAdmin(user.email)) {
     return NextResponse.json({ error: "No autorizado" }, { status: 403 });
   }
 
-  // Obtener perfiles y contar planes por usuario
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select("id, email, full_name, role, created_at")
-    .order("created_at", { ascending: false });
+  const service = createServiceClient();
 
-  if (!profiles) return NextResponse.json({ usuarios: [] });
+  // Obtener todos los perfiles via service role (bypasea RLS)
+  const [profilesResult, planCountsResult, authUsersResult] = await Promise.all([
+    service
+      .from("profiles")
+      .select("id, email, full_name, role, blocked, pro_expires_at, stripe_customer_id, created_at")
+      .order("created_at", { ascending: false }),
+    service.from("plans").select("user_id"),
+    service.auth.admin.listUsers({ perPage: 1000 }),
+  ]);
 
-  // Contar planes de cada usuario
-  const { data: planCounts } = await supabase
-    .from("plans")
-    .select("user_id");
+  const profiles = profilesResult.data ?? [];
+  const planCounts = planCountsResult.data ?? [];
+  const authUsers = authUsersResult.data?.users ?? [];
 
-  const conteo: Record<string, number> = {};
-  planCounts?.forEach(({ user_id }) => {
-    conteo[user_id] = (conteo[user_id] ?? 0) + 1;
+  // Índice de planes por usuario
+  const conteoPlanes: Record<string, number> = {};
+  planCounts.forEach(({ user_id }) => {
+    conteoPlanes[user_id] = (conteoPlanes[user_id] ?? 0) + 1;
+  });
+
+  // Índice de last_sign_in_at desde auth.users
+  const lastSignIn: Record<string, string | null> = {};
+  authUsers.forEach((u) => {
+    lastSignIn[u.id] = u.last_sign_in_at ?? null;
   });
 
   const usuarios = profiles.map((p) => ({
     ...p,
-    planes: conteo[p.id] ?? 0,
+    planes: conteoPlanes[p.id] ?? 0,
+    last_sign_in_at: lastSignIn[p.id] ?? null,
   }));
 
   return NextResponse.json({ usuarios });
