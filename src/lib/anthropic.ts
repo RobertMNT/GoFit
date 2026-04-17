@@ -6,4 +6,4 @@ export const anthropic = new Anthropic({
 });
 
 // Modelo a usar para generación de planes
-export const CLAUDE_MODEL = "claude-sonnet-4-20250514";
+export const CLAUDE_MODEL = "claude-haiku-4-5-20251001";

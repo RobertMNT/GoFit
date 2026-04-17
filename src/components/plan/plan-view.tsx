@@ -37,114 +37,209 @@ const COMIDA_EMOJI: Record<string, string> = {
 export function PlanView({ plan, esPro, weeklyLogs }: PlanViewProps) {
   const [semanaActiva, setSemanaActiva] = useState(1);
 
-  const semana = (plan.semanas as unknown as WeeklyPlan[]).find(
-    (s) => s.semana === semanaActiva,
-  );
+  const semanas = plan.semanas as unknown as WeeklyPlan[];
+  const semana = semanas.find((s) => s.semana === semanaActiva);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       {/* Cabecera del plan */}
-      <div className="mb-8 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-white">
-        <h1 className="text-2xl font-bold">{plan.nombre}</h1>
-        <p className="mt-2 text-sm text-blue-100">{plan.descripcion}</p>
-        <div className="mt-4 flex gap-4 text-sm">
-          <span className="rounded-full bg-white/20 px-3 py-1">
-            📅 {plan.duracion_semanas} semanas
-          </span>
-          {esPro && (
-            <span className="rounded-full bg-yellow-400/30 px-3 py-1 text-yellow-100">
-              ⭐ PRO — seguimiento activo
-            </span>
-          )}
+      <div className="mb-8 rounded-2xl bg-gradient-to-br from-blue-600 to-blue-700 p-6 text-white print:rounded-none print:bg-none print:p-0 print:text-black">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">{plan.nombre}</h1>
+            <p className="mt-2 text-sm text-blue-100 print:text-gray-600">{plan.descripcion}</p>
+            <div className="mt-4 flex gap-4 text-sm print:hidden">
+              <span className="rounded-full bg-white/20 px-3 py-1">
+                📅 {plan.duracion_semanas} semanas
+              </span>
+              {esPro && (
+                <span className="rounded-full bg-yellow-400/30 px-3 py-1 text-yellow-100">
+                  ⭐ PRO — seguimiento activo
+                </span>
+              )}
+            </div>
+          </div>
+          {/* Botón de descarga — sutil, solo visible en pantalla */}
+          <button
+            onClick={() => window.print()}
+            className="print:hidden flex shrink-0 items-center gap-1.5 rounded-xl bg-white/10 px-3 py-2 text-xs text-white/80 transition hover:bg-white/20"
+            title="Descargar como PDF"
+          >
+            <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3M3 17V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+            </svg>
+            PDF
+          </button>
         </div>
       </div>
 
-      {/* Selector de semana */}
-      <div className="mb-6 flex flex-wrap gap-2">
-        {(plan.semanas as unknown as WeeklyPlan[]).map((s) => (
-          <button
-            key={s.semana}
-            onClick={() => setSemanaActiva(s.semana)}
-            className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
-              semanaActiva === s.semana
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            Semana {s.semana}
-          </button>
-        ))}
-      </div>
-
-      {semana && (
-        <div className="space-y-4">
-          {/* Macros semanales */}
-          {semana.nutricion && (
-            <MacrosCard nutricion={semana.nutricion} />
-          )}
-
-          {/* Días de la semana */}
-          {semana.dias.map((dia) => (
-            <DiaCard
-              key={dia.dia}
-              dia={dia}
-              esPro={esPro}
-              planId={plan.id}
-              semana={semanaActiva}
-              logsData={(weeklyLogs.find((l) => l.week_number === semanaActiva)?.completed_exercises ?? {}) as Record<string, boolean>}
-            />
+      {/* Vista interactiva — oculta al imprimir */}
+      <div className="print:hidden">
+        {/* Selector de semana */}
+        <div className="mb-6 flex flex-wrap gap-2">
+          {semanas.map((s) => (
+            <button
+              key={s.semana}
+              onClick={() => setSemanaActiva(s.semana)}
+              className={`rounded-xl px-4 py-2 text-sm font-medium transition ${
+                semanaActiva === s.semana
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+              }`}
+            >
+              Semana {s.semana}
+            </button>
           ))}
+        </div>
 
-          {/* Seguimiento semanal y ajuste IA — solo PRO */}
-          {esPro && (
-            <div className="mt-8 space-y-4">
-              <WeeklyTracker
+        {semana && (
+          <div className="space-y-4">
+            {semana.nutricion && <MacrosCard nutricion={semana.nutricion} />}
+
+            {semana.dias.map((dia) => (
+              <DiaCard
+                key={dia.dia}
+                dia={dia}
+                esPro={esPro}
                 planId={plan.id}
                 semana={semanaActiva}
-                dias={semana.dias}
-                logsIniciales={weeklyLogs}
+                logsData={(weeklyLogs.find((l) => l.week_number === semanaActiva)?.completed_exercises ?? {}) as Record<string, boolean>}
               />
-              <AjusteIA planId={plan.id} semana={semanaActiva} />
+            ))}
+
+            {esPro && (
+              <div className="mt-8 space-y-4">
+                <WeeklyTracker
+                  planId={plan.id}
+                  semana={semanaActiva}
+                  dias={semana.dias}
+                  logsIniciales={weeklyLogs}
+                />
+                <AjusteIA planId={plan.id} semana={semanaActiva} />
+              </div>
+            )}
+
+            {!esPro && (
+              <div className="mt-6 rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-5">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">⭐</span>
+                  <div className="flex-1">
+                    <p className="font-semibold text-gray-900">Desbloquea el plan PRO</p>
+                    <ul className="mt-2 space-y-1.5 text-sm text-gray-600">
+                      <li className="flex items-center gap-2">
+                        <span className="text-emerald-500">✓</span>
+                        <span><strong>Rutina nutricional diaria</strong> — menú completo para cada día (desayuno, almuerzo, merienda y cena)</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-emerald-500">✓</span>
+                        <span>Seguimiento semanal de ejercicios</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-emerald-500">✓</span>
+                        <span>Ajuste automático del plan</span>
+                      </li>
+                      <li className="flex items-center gap-2">
+                        <span className="text-emerald-500">✓</span>
+                        <span>Planes ilimitados</span>
+                      </li>
+                    </ul>
+                    <a
+                      href="/precios"
+                      className="mt-4 inline-block rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+                    >
+                      Ver planes PRO →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Vista de impresión — solo visible al imprimir/exportar PDF */}
+      <div className="hidden print:block">
+        <PrintView plan={plan} semanas={semanas} esPro={esPro} />
+      </div>
+    </div>
+  );
+}
+
+// Vista de impresión — todas las semanas, sin elementos interactivos
+function PrintView({ plan, semanas, esPro }: { plan: FitnessPlan; semanas: WeeklyPlan[]; esPro: boolean }) {
+  return (
+    <div className="space-y-8 text-sm text-gray-900">
+      {/* Cabecera */}
+      <div className="border-b border-gray-300 pb-4">
+        <h1 className="text-2xl font-bold">{plan.nombre}</h1>
+        <p className="mt-1 text-gray-500">{plan.descripcion}</p>
+        <p className="mt-1 text-xs text-gray-400">{plan.duracion_semanas} semanas · FitAI</p>
+      </div>
+
+      {semanas.map((s) => (
+        <div key={s.semana} className="break-inside-avoid-page">
+          <h2 className="mb-3 text-base font-semibold text-gray-800 border-b border-gray-200 pb-1">
+            Semana {s.semana}
+          </h2>
+
+          {/* Macros */}
+          {s.nutricion && (
+            <div className="mb-3 flex gap-6 text-xs text-gray-600">
+              <span>{s.nutricion.calorias_diarias} kcal/día</span>
+              <span>Proteínas: {s.nutricion.proteinas_g}g</span>
+              <span>Carbohidratos: {s.nutricion.carbohidratos_g}g</span>
+              <span>Grasas: {s.nutricion.grasas_g}g</span>
             </div>
           )}
 
-          {/* Banner upgrade para usuarios FREE */}
-          {!esPro && (
-            <div className="mt-6 rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-5">
-              <div className="flex items-start gap-3">
-                <span className="text-2xl">⭐</span>
-                <div className="flex-1">
-                  <p className="font-semibold text-gray-900">Desbloquea el plan PRO</p>
-                  <ul className="mt-2 space-y-1.5 text-sm text-gray-600">
-                    <li className="flex items-center gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span><strong>Rutina nutricional diaria</strong> — menú completo para cada día (desayuno, almuerzo, merienda y cena)</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Seguimiento semanal de ejercicios</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Ajuste automático del plan</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="text-emerald-500">✓</span>
-                      <span>Planes ilimitados</span>
-                    </li>
-                  </ul>
-                  <a
-                    href="/precios"
-                    className="mt-4 inline-block rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
-                  >
-                    Ver planes PRO →
-                  </a>
+          {/* Días */}
+          <div className="space-y-3">
+            {s.dias.map((dia) => (
+              <div key={dia.dia} className="break-inside-avoid">
+                <div className="font-medium capitalize text-gray-700">
+                  {dia.dia} — <span className="text-xs font-normal text-gray-400">{dia.tipo.replace("_", " ")}</span>
                 </div>
+
+                {dia.ejercicios.length > 0 && (
+                  <table className="mt-1 w-full border-collapse text-xs">
+                    <thead>
+                      <tr className="border-b border-gray-200 text-gray-400">
+                        <th className="py-1 text-left font-normal">Ejercicio</th>
+                        <th className="py-1 text-center font-normal">Series</th>
+                        <th className="py-1 text-center font-normal">Reps</th>
+                        <th className="py-1 text-center font-normal">Descanso</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {dia.ejercicios.map((ej, i) => (
+                        <tr key={i} className="border-b border-gray-100">
+                          <td className="py-1">{ej.nombre}{ej.notas ? ` (${ej.notas})` : ""}</td>
+                          <td className="py-1 text-center text-gray-600">{ej.series}</td>
+                          <td className="py-1 text-center text-gray-600">{ej.repeticiones}</td>
+                          <td className="py-1 text-center text-gray-400">{ej.descanso_segundos}s</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+
+                {/* Comidas del día — solo PRO */}
+                {esPro && (dia.comidas?.length ?? 0) > 0 && (
+                  <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-gray-500">
+                    {dia.comidas!.map((c) => (
+                      <span key={c.nombre}>{c.nombre}: {c.ejemplo} ({c.calorias} kcal)</span>
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
-      )}
+      ))}
+
+      <p className="mt-6 border-t border-gray-200 pt-3 text-xs text-gray-400">
+        Para el seguimiento interactivo, vídeos de ejercicios y ajuste automático del plan, visita fitai.app
+      </p>
     </div>
   );
 }

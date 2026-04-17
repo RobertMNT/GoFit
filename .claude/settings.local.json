@@ -24,7 +24,8 @@
       "Bash(git commit -m ':*)",
       "Bash(git push:*)",
       "Bash(ls public/)",
-      "Bash(ls *.svg *.png *.ico)"
+      "Bash(ls *.svg *.png *.ico)",
+      "Bash(xargs cat *)"
     ]
   }
 }

@@ -82,8 +82,35 @@ export default async function DashboardPage({
                 Actualizar a PRO
               </Link>
             )}
+            <Link
+              href="/perfil"
+              className="flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-600 shadow-sm transition hover:bg-gray-50"
+              title="Mi cuenta"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+              </svg>
+              Mi cuenta
+            </Link>
           </div>
         </div>
+
+        {/* Acceso rápido al plan más reciente */}
+        {userPlans.length > 0 && (
+          <Link
+            href={`/plan/${userPlans[0].id}`}
+            className="mb-8 flex items-center justify-between rounded-2xl bg-white border border-gray-200 px-5 py-4 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+          >
+            <div className="min-w-0">
+              <p className="text-xs font-medium text-blue-600 mb-0.5">Plan activo</p>
+              <p className="font-semibold text-gray-900 truncate">{userPlans[0].nombre}</p>
+              <p className="mt-0.5 text-xs text-gray-400 line-clamp-1">{userPlans[0].descripcion}</p>
+            </div>
+            <svg className="ml-4 h-5 w-5 shrink-0 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          </Link>
+        )}
 
         {/* CTA nuevo plan */}
         <div className="mb-8 flex items-center justify-between">

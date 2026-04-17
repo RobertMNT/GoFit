@@ -26,6 +26,7 @@ export function ProfileClient({ profile, subscription, planesCreados }: ProfileC
 
   // Portal Stripe
   const [abriendoPortal, setAbriendoPortal] = useState(false);
+  const [errorPortal, setErrorPortal] = useState<string | null>(null);
 
   const cerrarSesion = async () => {
     setCerrandoSesion(true);
@@ -57,12 +58,17 @@ export function ProfileClient({ profile, subscription, planesCreados }: ProfileC
 
   const abrirPortalStripe = async () => {
     setAbriendoPortal(true);
+    setErrorPortal(null);
     try {
       const res = await fetch("/api/crear-portal", { method: "POST" });
       const data = await res.json();
-      if (data.url) window.location.href = data.url;
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        setErrorPortal(data.error ?? "No se pudo abrir el portal de suscripción");
+      }
     } catch {
-      // fallback silencioso
+      setErrorPortal("Error de conexión. Inténtalo de nuevo.");
     } finally {
       setAbriendoPortal(false);
     }
@@ -170,7 +176,7 @@ export function ProfileClient({ profile, subscription, planesCreados }: ProfileC
         {/* Suscripción */}
         <section className="mb-6 rounded-2xl bg-white p-6 shadow-sm">
           <h2 className="mb-4 font-semibold text-gray-900">Suscripción</h2>
-          {esPro && subscription ? (
+          {esPro ? (
             <div className="space-y-3 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-500">Estado</span>
@@ -179,26 +185,31 @@ export function ProfileClient({ profile, subscription, planesCreados }: ProfileC
               {fechaRenovacion && (
                 <div className="flex justify-between">
                   <span className="text-gray-500">
-                    {subscription.cancel_at_period_end ? "Expira el" : "Renovación el"}
+                    {subscription?.cancel_at_period_end ? "Expira el" : "Renovación el"}
                   </span>
                   <span className="font-medium text-gray-900">{fechaRenovacion}</span>
                 </div>
               )}
-              {subscription.cancel_at_period_end && (
+              {subscription?.cancel_at_period_end && (
                 <p className="rounded-lg bg-yellow-50 p-3 text-xs text-yellow-700">
                   Tu suscripción está programada para cancelarse. Seguirás teniendo acceso PRO hasta
                   la fecha de expiración.
                 </p>
               )}
-              <div className="pt-1">
-                <button
-                  onClick={abrirPortalStripe}
-                  disabled={abriendoPortal}
-                  className="w-full rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
-                >
-                  {abriendoPortal ? "Abriendo..." : "Gestionar suscripción →"}
-                </button>
-              </div>
+              {profile.stripe_customer_id && (
+                <div className="pt-1">
+                  <button
+                    onClick={abrirPortalStripe}
+                    disabled={abriendoPortal}
+                    className="w-full rounded-xl border border-gray-200 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:opacity-50"
+                  >
+                    {abriendoPortal ? "Abriendo..." : "Gestionar suscripción →"}
+                  </button>
+                  {errorPortal && (
+                    <p className="mt-2 text-xs text-red-600">{errorPortal}</p>
+                  )}
+                </div>
+              )}
             </div>
           ) : (
             <div>
