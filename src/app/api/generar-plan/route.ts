@@ -84,7 +84,9 @@ export async function POST(request: Request) {
 
   const enc = new TextEncoder();
 
-  const userId = user.id; // capturar antes de entrar en closures async
+  // Capturar valores antes de entrar en closures async para que TypeScript los vea como definidos
+  const userId = user.id;
+  const questionnaireId = parsed.data.questionnaire_id;
 
   // ── Función auxiliar: guardar plan en DB y emitir "done" ─────
   async function guardarYEmitir(
@@ -108,7 +110,7 @@ export async function POST(request: Request) {
       .from("plans")
       .insert({
         user_id: userId,
-        questionnaire_id: parsed.data.questionnaire_id,
+        questionnaire_id: questionnaireId,
         nombre: planResult.data.nombre,
         descripcion: planResult.data.descripcion,
         duracion_semanas: planResult.data.duracion_semanas,
