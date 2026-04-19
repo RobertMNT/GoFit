@@ -2,9 +2,19 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, Sparkles, ContactShadows } from "@react-three/drei";
-import { EffectComposer, Bloom } from "@react-three/postprocessing";
-import { useRef } from "react";
+import { useRef, Suspense } from "react";
 import * as THREE from "three";
+
+// EffectComposer importado de forma lazy para evitar crash en React 19 / Next.js 16
+let EffectComposer: React.ComponentType<{ children: React.ReactNode }> | null = null;
+let Bloom: React.ComponentType<{ intensity: number; luminanceThreshold: number; luminanceSmoothing: number; mipmapBlur: boolean }> | null = null;
+try {
+  const pp = require("@react-three/postprocessing");
+  EffectComposer = pp.EffectComposer;
+  Bloom = pp.Bloom;
+} catch {
+  // postprocessing no disponible — canvas funciona igualmente sin bloom
+}
 
 // ─── Mancuerna hecha con geometría Three.js ─────────────────────────────────
 function Dumbbell({ position = [0, 0, 0] as [number, number, number], scale = 1, speed = 0.2 }) {
@@ -153,9 +163,14 @@ export function Hero3D() {
       {/* Sombra de contacto */}
       <ContactShadows position={[0, -2.5, 0]} opacity={0.4} scale={10} blur={3} far={4} color="#1e40af" />
 
-      <EffectComposer>
-        <Bloom intensity={1.4} luminanceThreshold={0.15} luminanceSmoothing={0.85} mipmapBlur />
-      </EffectComposer>
+      {/* Bloom — omitido si postprocessing no es compatible con el entorno */}
+      {EffectComposer && Bloom && (
+        <Suspense fallback={null}>
+          <EffectComposer>
+            <Bloom intensity={1.4} luminanceThreshold={0.15} luminanceSmoothing={0.85} mipmapBlur />
+          </EffectComposer>
+        </Suspense>
+      )}
     </Canvas>
   );
 }
