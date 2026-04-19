@@ -65,10 +65,15 @@ export function AuthForm({ mode }: AuthFormProps) {
 
   const handleGoogleLogin = async () => {
     setError(null);
+    // Siempre usar el dominio canónico para el callback — evita quedarse en .vercel.app
+    const appUrl =
+      process.env.NEXT_PUBLIC_APP_URL?.startsWith("http")
+        ? process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")
+        : window.location.origin;
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${nextUrl}`,
+        redirectTo: `${appUrl}/auth/callback?next=${nextUrl}`,
       },
     });
     if (oauthError) setError(oauthError.message);

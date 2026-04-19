@@ -3,9 +3,11 @@ import { NextResponse } from "next/server";
 import Stripe from "stripe";
 
 // Crea una sesión del Customer Portal de Stripe para gestionar la suscripción
-export async function POST() {
+export async function POST(req: Request) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const { data: profile } = await supabase
@@ -15,15 +17,38 @@ export async function POST() {
     .single();
 
   if (!profile?.stripe_customer_id) {
-    return NextResponse.json({ error: "No hay suscripción activa" }, { status: 400 });
+    return NextResponse.json(
+      { error: "No tienes ninguna suscripción de Stripe asociada" },
+      { status: 400 },
+    );
   }
 
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2026-03-25.dahlia" });
+  if (!process.env.STRIPE_SECRET_KEY) {
+    console.error("[crear-portal] STRIPE_SECRET_KEY no configurada");
+    return NextResponse.json({ error: "Pagos no configurados" }, { status: 500 });
+  }
 
-  const session = await stripe.billingPortal.sessions.create({
-    customer: profile.stripe_customer_id,
-    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/perfil`,
-  });
+  // Determinar la URL base desde la petición (funciona en local y en producción)
+  const origin = new URL(req.url).origin;
+  const returnUrl =
+    process.env.NEXT_PUBLIC_APP_URL?.startsWith("http")
+      ? `${process.env.NEXT_PUBLIC_APP_URL}/perfil`
+      : `${origin}/perfil`;
 
-  return NextResponse.json({ url: session.url });
+  try {
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2026-03-25.dahlia",
+    });
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: profile.stripe_customer_id,
+      return_url: returnUrl,
+    });
+
+    return NextResponse.json({ url: session.url });
+  } catch (err) {
+    console.error("[crear-portal] Stripe error:", err);
+    const message = err instanceof Error ? err.message : "Error al crear la sesión";
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

@@ -2,6 +2,9 @@ import { createServerClient } from "@supabase/ssr";
 import { isAdmin } from "@/lib/admin";
 import { NextResponse, type NextRequest } from "next/server";
 
+// Dominio canónico en producción — fuerza redirect desde el dominio de Vercel
+const CANONICAL_HOST = "www.zapfit.fit";
+
 // Rutas que requieren autenticación
 const PROTECTED_ROUTES = ["/dashboard", "/plan", "/perfil", "/onboarding", "/admin"];
 
@@ -15,6 +18,20 @@ const AUTH_ROUTES = ["/login", "/registro"];
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7;
 
 export async function middleware(request: NextRequest) {
+  // Redirigir desde el dominio de Vercel al dominio canónico en producción
+  const host = request.headers.get("host") ?? "";
+  if (
+    process.env.NODE_ENV === "production" &&
+    host !== CANONICAL_HOST &&
+    !host.startsWith("localhost")
+  ) {
+    const url = new URL(request.url);
+    url.host = CANONICAL_HOST;
+    url.protocol = "https:";
+    url.port = "";
+    return NextResponse.redirect(url.toString(), { status: 301 });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

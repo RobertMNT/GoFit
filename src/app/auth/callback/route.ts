@@ -8,16 +8,20 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
 
+  // Usar siempre el dominio canónico en producción para evitar quedarse en .vercel.app
+  const baseUrl =
+    process.env.NODE_ENV === "production" && process.env.NEXT_PUBLIC_APP_URL
+      ? process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "")
+      : origin;
+
   if (code) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
 
     if (!error) {
-      // Redirigir a la ruta solicitada tras autenticación exitosa
-      return NextResponse.redirect(`${origin}${next}`);
+      return NextResponse.redirect(`${baseUrl}${next}`);
     }
   }
 
-  // Redirigir a login con error si el intercambio falla
-  return NextResponse.redirect(`${origin}/login?error=auth_callback_failed`);
+  return NextResponse.redirect(`${baseUrl}/login?error=auth_callback_failed`);
 }

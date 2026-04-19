@@ -1,5 +1,6 @@
 import { anthropic, CLAUDE_MODEL } from "@/lib/anthropic";
 import { buildPlanPrompt } from "@/lib/plan-prompt";
+import { buildPlanCacheKey, getPlanCache, setPlanCache } from "@/lib/cache";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { questionnaireSchema } from "@/lib/questionnaire-schema";
 import { createClient } from "@/lib/supabase/server";
@@ -75,10 +76,81 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Respuestas del cuestionario inválidas" }, { status: 422 });
   }
 
-  const prompt = buildPlanPrompt(answersResult.data, profile?.role === "pro");
+  const esPro = profile?.role === "pro";
+  const cacheKey = buildPlanCacheKey(answersResult.data, esPro);
 
-  // SSE streaming — el cliente ve el progreso en tiempo real
+  // ── Comprobar caché antes de llamar a Claude ─────────────────
+  const cachedPlan = cacheKey ? await getPlanCache(cacheKey) : null;
+
   const enc = new TextEncoder();
+
+  // ── Función auxiliar: guardar plan en DB y emitir "done" ─────
+  async function guardarYEmitir(
+    planData: Record<string, unknown>,
+    controller: ReadableStreamDefaultController,
+  ) {
+    const send = (data: object) => {
+      controller.enqueue(enc.encode(`data: ${JSON.stringify(data)}\n\n`));
+    };
+
+    const planResult = fitnessPlanResponseSchema.safeParse(planData);
+    if (!planResult.success) {
+      send({ type: "error", message: "Estructura del plan inválida" });
+      controller.close();
+      return;
+    }
+
+    send({ type: "saving" });
+
+    const { data: savedPlan, error: saveError } = await supabase
+      .from("plans")
+      .insert({
+        user_id: user.id,
+        questionnaire_id: parsed.data.questionnaire_id,
+        nombre: planResult.data.nombre,
+        descripcion: planResult.data.descripcion,
+        duracion_semanas: planResult.data.duracion_semanas,
+        semanas: planResult.data.semanas,
+      })
+      .select("id")
+      .single();
+
+    if (saveError || !savedPlan) {
+      send({ type: "error", message: "Error al guardar el plan" });
+      controller.close();
+      return;
+    }
+
+    send({ type: "done", plan_id: savedPlan.id });
+    controller.close();
+  }
+
+  // ── Si hay caché: devolver inmediatamente sin llamar a Claude ─
+  if (cachedPlan) {
+    const stream = new ReadableStream({
+      async start(controller) {
+        const send = (data: object) => {
+          controller.enqueue(enc.encode(`data: ${JSON.stringify(data)}\n\n`));
+        };
+        // Simular los pasos del stream para que el cliente vea el mismo flujo
+        send({ type: "chunk", text: "" });
+        send({ type: "generating" });
+        await guardarYEmitir(cachedPlan, controller);
+      },
+    });
+
+    return new Response(stream, {
+      headers: {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache, no-transform",
+        "X-Accel-Buffering": "no",
+      },
+    });
+  }
+
+  // ── Sin caché: llamar a Claude con streaming ─────────────────
+  const prompt = buildPlanPrompt(answersResult.data, esPro);
+
   const stream = new ReadableStream({
     async start(controller) {
       const send = (data: object) => {
@@ -105,7 +177,6 @@ export async function POST(request: Request) {
           }
         }
 
-        // Parsear JSON de la respuesta completa
         const start = fullText.indexOf("{");
         const end = fullText.lastIndexOf("}");
         if (start === -1 || end === -1 || end <= start) {
@@ -125,43 +196,17 @@ export async function POST(request: Request) {
           return;
         }
 
-        const planResult = fitnessPlanResponseSchema.safeParse(planData);
-        if (!planResult.success) {
-          console.error("[generar-plan] validación Zod:", JSON.stringify(planResult.error.issues.slice(0, 3)));
-          send({ type: "error", message: "Estructura del plan inválida" });
-          controller.close();
-          return;
+        // Guardar en caché para futuros usuarios con el mismo perfil
+        if (cacheKey && planData) {
+          setPlanCache(cacheKey, planData as Record<string, unknown>).catch(() => {});
         }
 
-        // Guardar en Supabase
-        send({ type: "saving" });
-
-        const { data: savedPlan, error: saveError } = await supabase
-          .from("plans")
-          .insert({
-            user_id: user.id,
-            questionnaire_id: parsed.data.questionnaire_id,
-            nombre: planResult.data.nombre,
-            descripcion: planResult.data.descripcion,
-            duracion_semanas: planResult.data.duracion_semanas,
-            semanas: planResult.data.semanas,
-          })
-          .select("id")
-          .single();
-
-        if (saveError || !savedPlan) {
-          send({ type: "error", message: "Error al guardar el plan" });
-          controller.close();
-          return;
-        }
-
-        send({ type: "done", plan_id: savedPlan.id });
+        await guardarYEmitir(planData as Record<string, unknown>, controller);
       } catch (err) {
         console.error("[generar-plan]", err);
         send({ type: "error", message: "Error interno del servidor" });
+        controller.close();
       }
-
-      controller.close();
     },
   });
 

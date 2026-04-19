@@ -1,4 +1,5 @@
 import { anthropic, CLAUDE_MODEL } from "@/lib/anthropic";
+import { getEjercicioCache, setEjercicioCache } from "@/lib/cache";
 import { createClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 import { z } from "zod";
@@ -18,18 +19,32 @@ const infoSchema = z.object({
 
 export type EjercicioInfo = z.infer<typeof infoSchema>;
 
-// Devuelve explicación técnica de un ejercicio (sin mencionar IA)
+// Devuelve explicación técnica de un ejercicio
+// Primero busca en caché global — solo llama a Claude si no existe
 export async function POST(req: Request) {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   const body = await req.json().catch(() => ({}));
   const parsed = requestSchema.safeParse(body);
-  if (!parsed.success) return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
+  if (!parsed.success)
+    return NextResponse.json({ error: "Parámetros inválidos" }, { status: 400 });
 
   const { nombre, notas } = parsed.data;
 
+  // ── 1. Buscar en caché ──────────────────────────────────────
+  // La clave es solo el nombre (normalizado) — las notas son contexto menor
+  // que no justifica duplicar entradas de caché para el mismo ejercicio
+  const cached = await getEjercicioCache(nombre);
+  if (cached) {
+    const valid = infoSchema.safeParse(cached);
+    if (valid.success) return NextResponse.json(valid.data);
+  }
+
+  // ── 2. Llamar a Claude ──────────────────────────────────────
   const prompt = `Eres un entrenador personal experto. Explica el ejercicio "${nombre}"${notas ? ` (nota: ${notas})` : ""} de forma clara y concisa.
 
 Responde ÚNICAMENTE con este JSON válido, sin texto adicional:
@@ -67,6 +82,9 @@ Máximo 3-4 pasos, 2 errores comunes. Respuesta en español.`;
 
     const result = infoSchema.safeParse(data);
     if (!result.success) throw new Error("Estructura inválida");
+
+    // ── 3. Guardar en caché para futuros usuarios ─────────────
+    setEjercicioCache(nombre, result.data as unknown as Record<string, unknown>).catch(() => {});
 
     return NextResponse.json(result.data);
   } catch {
