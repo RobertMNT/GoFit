@@ -84,6 +84,8 @@ export async function POST(request: Request) {
 
   const enc = new TextEncoder();
 
+  const userId = user.id; // capturar antes de entrar en closures async
+
   // ── Función auxiliar: guardar plan en DB y emitir "done" ─────
   async function guardarYEmitir(
     planData: Record<string, unknown>,
@@ -105,7 +107,7 @@ export async function POST(request: Request) {
     const { data: savedPlan, error: saveError } = await supabase
       .from("plans")
       .insert({
-        user_id: user.id,
+        user_id: userId,
         questionnaire_id: parsed.data.questionnaire_id,
         nombre: planResult.data.nombre,
         descripcion: planResult.data.descripcion,
