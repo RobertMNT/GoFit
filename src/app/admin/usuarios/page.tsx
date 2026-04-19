@@ -15,6 +15,9 @@ interface UsuarioAdmin {
   last_sign_in_at: string | null;
 }
 
+type SortField = "full_name" | "role" | "planes" | "last_sign_in_at" | "created_at" | "blocked";
+type SortDir = "asc" | "desc";
+
 const DURACIONES = [
   { label: "1 mes",    meses: 1 },
   { label: "3 meses",  meses: 3 },
@@ -26,6 +29,25 @@ const DURACIONES = [
 function fechaCorta(iso: string | null) {
   if (!iso) return "—";
   return new Date(iso).toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: SortField; sortDir: SortDir }) {
+  if (sortField !== field) {
+    return (
+      <svg className="ml-1 inline h-3 w-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4" />
+      </svg>
+    );
+  }
+  return sortDir === "asc" ? (
+    <svg className="ml-1 inline h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
+    </svg>
+  ) : (
+    <svg className="ml-1 inline h-3 w-3 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  );
 }
 
 function tiempoRelativo(iso: string | null) {
@@ -48,10 +70,19 @@ export default function AdminUsuariosPage() {
   const [cargando, setCargando] = useState(true);
   const [isPending, startTransition] = useTransition();
   const [mensaje, setMensaje] = useState<{ tipo: "ok" | "err"; texto: string } | null>(null);
-  // selector de duración por usuario
+  const [sortField, setSortField] = useState<SortField>("created_at");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [duracionSeleccionada, setDuracionSeleccionada] = useState<Record<string, number | null>>({});
-  // usuario expandido para ver stats
   const [expandido, setExpandido] = useState<string | null>(null);
+
+  const toggleSort = (field: SortField) => {
+    if (sortField === field) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  };
 
   useEffect(() => {
     fetch("/api/admin/usuarios")
@@ -111,13 +142,51 @@ export default function AdminUsuariosPage() {
     });
   };
 
-  const filtrados = usuarios.filter((u) => {
-    const coincideTexto =
-      u.email.toLowerCase().includes(filtro.toLowerCase()) ||
-      (u.full_name ?? "").toLowerCase().includes(filtro.toLowerCase());
-    const coincideRol = tabRol === "todos" || u.role === tabRol;
-    return coincideTexto && coincideRol;
-  });
+  const filtrados = usuarios
+    .filter((u) => {
+      const coincideTexto =
+        u.email.toLowerCase().includes(filtro.toLowerCase()) ||
+        (u.full_name ?? "").toLowerCase().includes(filtro.toLowerCase());
+      const coincideRol = tabRol === "todos" || u.role === tabRol;
+      return coincideTexto && coincideRol;
+    })
+    .sort((a, b) => {
+      let valA: string | number;
+      let valB: string | number;
+
+      switch (sortField) {
+        case "full_name":
+          valA = (a.full_name ?? a.email).toLowerCase();
+          valB = (b.full_name ?? b.email).toLowerCase();
+          break;
+        case "role":
+          valA = a.role;
+          valB = b.role;
+          break;
+        case "planes":
+          valA = a.planes;
+          valB = b.planes;
+          break;
+        case "last_sign_in_at":
+          valA = a.last_sign_in_at ?? "";
+          valB = b.last_sign_in_at ?? "";
+          break;
+        case "created_at":
+          valA = a.created_at;
+          valB = b.created_at;
+          break;
+        case "blocked":
+          valA = a.blocked ? 1 : 0;
+          valB = b.blocked ? 1 : 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (valA < valB) return sortDir === "asc" ? -1 : 1;
+      if (valA > valB) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
 
   return (
     <div>
@@ -176,11 +245,31 @@ export default function AdminUsuariosPage() {
           <table className="w-full text-sm">
             <thead className="border-b border-gray-100 bg-gray-50 text-xs font-semibold uppercase tracking-wide text-gray-400">
               <tr>
-                <th className="px-5 py-3 text-left">Usuario</th>
-                <th className="px-5 py-3 text-center">Rol / Expira</th>
-                <th className="px-5 py-3 text-center">Planes</th>
-                <th className="px-5 py-3 text-center">Último acceso</th>
-                <th className="px-5 py-3 text-center">Estado</th>
+                <th className="px-5 py-3 text-left">
+                  <button onClick={() => toggleSort("full_name")} className="flex items-center hover:text-gray-700 transition">
+                    Usuario <SortIcon field="full_name" sortField={sortField} sortDir={sortDir} />
+                  </button>
+                </th>
+                <th className="px-5 py-3 text-center">
+                  <button onClick={() => toggleSort("role")} className="inline-flex items-center hover:text-gray-700 transition">
+                    Rol / Expira <SortIcon field="role" sortField={sortField} sortDir={sortDir} />
+                  </button>
+                </th>
+                <th className="px-5 py-3 text-center">
+                  <button onClick={() => toggleSort("planes")} className="inline-flex items-center hover:text-gray-700 transition">
+                    Planes <SortIcon field="planes" sortField={sortField} sortDir={sortDir} />
+                  </button>
+                </th>
+                <th className="px-5 py-3 text-center">
+                  <button onClick={() => toggleSort("last_sign_in_at")} className="inline-flex items-center hover:text-gray-700 transition">
+                    Último acceso <SortIcon field="last_sign_in_at" sortField={sortField} sortDir={sortDir} />
+                  </button>
+                </th>
+                <th className="px-5 py-3 text-center">
+                  <button onClick={() => toggleSort("blocked")} className="inline-flex items-center hover:text-gray-700 transition">
+                    Estado <SortIcon field="blocked" sortField={sortField} sortDir={sortDir} />
+                  </button>
+                </th>
                 <th className="px-5 py-3 text-right">Acciones</th>
               </tr>
             </thead>

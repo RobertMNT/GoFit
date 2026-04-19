@@ -48,7 +48,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ url: session.url });
   } catch (err) {
     console.error("[crear-portal] Stripe error:", err);
-    const message = err instanceof Error ? err.message : "Error al crear la sesión";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const raw = err instanceof Error ? err.message : "";
+
+    // Customer de test usado con clave live (o viceversa) — limpiar y pedir al usuario que renueve
+    if (raw.includes("a similar object exists in test mode") || raw.includes("a similar object exists in live mode")) {
+      // Limpiar el customer_id obsoleto para que se genere uno nuevo en el modo correcto
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        await supabase.from("profiles").update({ stripe_customer_id: null }).eq("id", user.id);
+      }
+      return NextResponse.json(
+        { error: "Hubo un problema con tu método de pago. Por favor, suscríbete de nuevo desde la página de precios." },
+        { status: 400 },
+      );
+    }
+
+    return NextResponse.json({ error: "No se pudo abrir el portal de pago. Inténtalo de nuevo." }, { status: 500 });
   }
 }
