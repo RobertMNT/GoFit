@@ -98,7 +98,7 @@ export function PlanView({ plan, esPro, weeklyLogs }: PlanViewProps) {
 
             {semana.dias.map((dia) => (
               <DiaCard
-                key={dia.dia}
+                key={`s${semanaActiva}-${dia.dia}`}
                 dia={dia}
                 esPro={esPro}
                 planId={plan.id}
@@ -110,6 +110,7 @@ export function PlanView({ plan, esPro, weeklyLogs }: PlanViewProps) {
             {esPro && (
               <div className="mt-8 space-y-4">
                 <WeeklyTracker
+                  key={semanaActiva}
                   planId={plan.id}
                   semana={semanaActiva}
                   dias={semana.dias}

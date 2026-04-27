@@ -74,7 +74,8 @@ ${esPro ? `4. Para CADA día de la semana (incluyendo días de descanso), incluy
 5. Las comidas deben variar de un día a otro — no repitas el mismo plato en la misma semana
 6. Las comidas de días de entrenamiento deben tener más carbohidratos pre-entreno; las de descanso más proteína y menos carbos
 7. Respeta la preferencia de dieta y evita los alimentos indicados
-8. Las calorías de las 4 comidas deben sumar aproximadamente el total diario` : `4. NO incluyas comidas en los días ("comidas" debe ser un array vacío [] en cada día)
+8. Las calorías de las 4 comidas deben sumar aproximadamente el total diario
+9. En el campo "ejemplo" de cada comida incluye SIEMPRE las cantidades en gramos o ml de cada ingrediente principal (ej: "80 g avena, 200 ml leche semidesnatada, 1 plátano mediano (120 g), 20 g nueces")` : `4. NO incluyas comidas en los días ("comidas" debe ser un array vacío [] en cada día)
 5. La nutrición solo se representa con macros semanales (calorias_diarias, proteinas_g, carbohidratos_g, grasas_g, notas)
 6. Respeta la preferencia de dieta en las notas nutricionales`}
 
@@ -104,7 +105,7 @@ Responde ÚNICAMENTE con un objeto JSON que siga esta estructura exacta:
             {
               "nombre": "Desayuno | Almuerzo | Merienda | Cena",
               "calorias": number,
-              "ejemplo": "string — descripción concisa del plato, ej: 'Avena con leche, plátano y nueces'"
+              "ejemplo": "string — ingredientes del plato CON cantidades exactas en g/ml, ej: '80 g avena, 200 ml leche semidesnatada, 1 plátano (120 g), 20 g nueces'"
             }
           ],
           "ejercicios": [
