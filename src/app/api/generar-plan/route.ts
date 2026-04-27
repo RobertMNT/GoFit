@@ -162,11 +162,12 @@ export async function POST(request: Request) {
       };
 
       let fullText = "";
+      let stopReason: string | null = null;
 
       try {
         const anthropicStream = await anthropic.messages.create({
           model: CLAUDE_MODEL,
-          max_tokens: 16000,
+          max_tokens: 32000,
           stream: true,
           messages: [{ role: "user", content: prompt }],
         });
@@ -179,6 +180,16 @@ export async function POST(request: Request) {
             fullText += event.delta.text;
             send({ type: "chunk", text: event.delta.text });
           }
+          if (event.type === "message_delta" && event.delta.stop_reason) {
+            stopReason = event.delta.stop_reason;
+          }
+        }
+
+        if (stopReason === "max_tokens") {
+          console.error("[generar-plan] respuesta truncada por max_tokens");
+          send({ type: "error", message: "El plan generado es demasiado largo. Intenta reducir la duración de sesión o los días por semana." });
+          controller.close();
+          return;
         }
 
         const start = fullText.indexOf("{");
@@ -194,7 +205,7 @@ export async function POST(request: Request) {
         try {
           planData = JSON.parse(fullText.slice(start, end + 1));
         } catch (parseErr) {
-          console.error("[generar-plan] JSON inválido:", parseErr);
+          console.error("[generar-plan] JSON inválido:", parseErr, "\nTexto:", fullText.slice(0, 500));
           send({ type: "error", message: "JSON inválido en respuesta IA" });
           controller.close();
           return;
