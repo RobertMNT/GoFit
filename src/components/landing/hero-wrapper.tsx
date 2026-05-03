@@ -1,7 +1,32 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { Component, type ReactNode } from "react";
+import { ZapFitLogo } from "@/components/ui/gofit-logo";
 import { Spinner } from "@/components/ui/spinner";
+
+// Fallback visual cuando WebGL no está disponible o falla
+function HeroFallback() {
+  return (
+    <div className="flex h-full items-center justify-center">
+      <div className="opacity-30">
+        <ZapFitLogo height={48} />
+      </div>
+    </div>
+  );
+}
+
+// Error boundary para capturar fallos de WebGL/Three.js
+class WebGLBoundary extends Component<{ children: ReactNode }, { crashed: boolean }> {
+  state = { crashed: false };
+  componentDidCatch() {
+    this.setState({ crashed: true });
+  }
+  render() {
+    if (this.state.crashed) return <HeroFallback />;
+    return this.props.children;
+  }
+}
 
 // Wrapper cliente necesario: ssr:false no está permitido en Server Components
 const HeroSection = dynamic(
@@ -17,5 +42,9 @@ const HeroSection = dynamic(
 );
 
 export function HeroWrapper() {
-  return <HeroSection />;
+  return (
+    <WebGLBoundary>
+      <HeroSection />
+    </WebGLBoundary>
+  );
 }
