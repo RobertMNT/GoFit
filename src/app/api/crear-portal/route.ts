@@ -50,16 +50,11 @@ export async function POST(req: Request) {
     console.error("[crear-portal] Stripe error:", err);
     const raw = err instanceof Error ? err.message : "";
 
-    // Customer de test usado con clave live (o viceversa) — limpiar y pedir al usuario que renueve
-    if (raw.includes("a similar object exists in test mode") || raw.includes("a similar object exists in live mode")) {
-      // Limpiar el customer_id obsoleto para que se genere uno nuevo en el modo correcto
-      const supabase = await createClient();
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        await supabase.from("profiles").update({ stripe_customer_id: null }).eq("id", user.id);
-      }
+    // Customer de test usado con clave live (o viceversa) — limpiar y redirigir a precios
+    if (raw.includes("a similar object exists in test mode") || raw.includes("a similar object exists in live mode") || raw.includes("No such customer")) {
+      await supabase.from("profiles").update({ stripe_customer_id: null }).eq("id", user.id);
       return NextResponse.json(
-        { error: "Hubo un problema con tu método de pago. Por favor, suscríbete de nuevo desde la página de precios." },
+        { error: "Tu suscripción anterior no está disponible. Por favor, suscríbete de nuevo desde la página de precios.", redirect: "/precios" },
         { status: 400 },
       );
     }

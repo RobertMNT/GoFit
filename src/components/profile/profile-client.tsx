@@ -64,6 +64,8 @@ export function ProfileClient({ profile, subscription, planesCreados }: ProfileC
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
+      } else if (data.redirect) {
+        router.push(data.redirect);
       } else {
         setErrorPortal(data.error ?? "No se pudo abrir el portal de suscripción");
       }
